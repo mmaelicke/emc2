@@ -1,0 +1,53 @@
+
+<div class="input-group input-group-lg">
+  <div class="input-group-prepend">
+    <button class="btn btn-dark" (click)="collapsed = !collapsed" style="width: 54px">
+      <fa [name]="collapsed ? 'chevron-down' : 'chevron-right'"></fa>
+    </button>
+  </div>
+  <input type="text" class="form-control form-control-dark"
+         placeholder="Search term"
+         [(ngModel)]="queryString"
+         (input)="onSearchFieldChanged()"
+
+  >
+  <div class="input-group-append">
+    <button class="btn btn-outline-light" type="button" (click)="onSearchConditionChanged()">
+      <fa name="search"></fa>
+    </button>
+  </div>
+</div>
+<div class="row bg-dark p-2 m-0 w-100" style="position: absolute" *ngIf="collapsed">
+  <div class="col col-sm-4">
+    <div class="input-group">
+      <span class="input-group-prepend input-group-text bg-dark text-light">Context: </span>
+      <select class="form-control form-control-dark" (change)="onSearchConditionChanged()" [(ngModel)]="queryContext">
+        <option class="bg-dark text-light" value="global">-- global --</option>
+        <template *ngFor="let context of contexts">
+          <option class="bg-dark text-light"
+                  *ngIf="context.name !=='global'">{{ context.name }}</option>
+        </template>
+      </select>
+    </div>
+  </div>
+  <div class="col col-sm-4">
+    <div class="input-group">
+      <span class="input-group-prepend input-group-text bg-dark text-light">Variable: </span>
+      <select class="form-control form-control-dark" (change)="onSearchConditionChanged()" [(ngModel)]="queryVariable">
+        <option class="bg-dark text-light">-- all --</option>
+        <option class="bg-dark text-light">Variable 1</option>
+        <option class="bg-dark text-light">Variable 2</option>
+        <option class="bg-dark text-light">Variable 3</option>
+      </select>
+    </div>
+  </div>
+  <div class="col col-sm-4">
+    <div class="form-check">
+      <label class="form-check-label text-light">
+        <input type="checkbox" class="form-check-input" [(ngModel)]="searchOnType">
+        Search on Type
+      </label>
+    </div>
+  </div>
+</div>
+
