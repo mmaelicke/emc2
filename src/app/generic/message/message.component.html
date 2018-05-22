@@ -1,9 +1,9 @@
 <ng-container *ngIf="messages.length >= 0">
   <div class="alert alert-{{ message.category }}" role="alert" *ngFor="let message of messages; let i = index">
-    <h4 class="alert-heading">{{ message.title }}</h4>
-    {{ message.message }}
     <button type="button" class="close" (click)="onRemoveMessage(i)">
       <fa name="times"></fa>
     </button>
+    <h4 class="alert-heading">{{ message.title }}</h4>
+    {{ message.message }}
   </div>
 </ng-container>

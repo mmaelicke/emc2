@@ -25,6 +25,7 @@ import {HttpClientModule} from '@angular/common/http';
 import { MessageComponent } from './generic/message/message.component';
 import { ContextManagerComponent } from './settings/context-manager/context-manager.component';
 import { EditContextComponent } from './settings/context-manager/edit-context/edit-context.component';
+import {MessageService} from './shared/message.service';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { EditContextComponent } from './settings/context-manager/edit-context/ed
     ElasticsearchService,
     SettingsService,
     ElasticTransportService,
+    MessageService,
   ],
   bootstrap: [AppComponent]
 })
