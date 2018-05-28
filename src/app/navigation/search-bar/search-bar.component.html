@@ -23,10 +23,10 @@
       <span class="input-group-prepend input-group-text bg-dark text-light">Context: </span>
       <select class="form-control form-control-dark" (change)="onSearchConditionChanged()" [(ngModel)]="queryContext">
         <option class="bg-dark text-light" value="global">-- global --</option>
-        <template *ngFor="let context of contexts">
+        <ng-container *ngFor="let context of contexts">
           <option class="bg-dark text-light"
                   *ngIf="context.name !=='global'">{{ context.name }}</option>
-        </template>
+        </ng-container>
       </select>
     </div>
   </div>

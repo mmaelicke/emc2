@@ -1,0 +1,63 @@
+<div [ngSwitch]="itemStyle">
+  <div *ngSwitchCase="'plain'" class="mb-2">
+    <div>
+      <div
+        class="badge badge-primary mr-5"
+        style="cursor: pointer"
+        (click)="isVisible=!isVisible"
+      >
+        <fa name="caret-{{ isVisible ? 'down': 'right' }}"></fa> ID: {{ hitItem._meta.id }}
+      </div>
+      <div class="badge">{{ hitItem.title }}</div><br>
+    </div>
+    <div [class]="isVisible ? 'collapse show' : 'collapse'">
+      <pre class="card bg-light p-3">{{ hitItem | json }}</pre>
+    </div>
+  </div>
+
+  <!-- LIST ITEM -->
+  <div *ngSwitchCase="'list-item'" class="list-group-item">
+    <h4 class="alert-heading">
+      {{ hitItem.title }}
+      <div class="badge badge-primary pull-right">ID: {{ hitItem._meta.id }}</div>
+    </h4>
+    <p>{{ hitItem.description }}</p>
+  </div>
+
+  <div *ngSwitchCase="'only_title'">
+    <h4>{{ hitItem.title }}</h4>
+  </div>
+
+  <!-- DEFAULT STYLE -->
+  <div class="alert alert-info" *ngSwitchDefault>
+    <h4 class="alert-heading">
+      {{ hitItem.title }}
+      <button type="button"
+              class="btn btn-sm btn-outline-primary pull-right"
+              (click)="isVisible=!isVisible"
+      >
+        <fa name="caret-{{ isVisible ? 'down': 'right' }}"></fa>
+      </button>
+    </h4>
+    <ng-container *ngTemplateOutlet="badgeRow"></ng-container>
+    <p class="mt-3">{{ hitItem.description }}</p>
+    <table class="table table-striped" *ngIf="isVisible">
+      <tr><th colspan="2" class="text-center">Supplementary information</th></tr>
+      <tr class="text-center"><th>meta data</th><th>value</th></tr>
+
+      <tr *ngFor="let suppItem of hitItem.getSupplementaryAsArray() ">
+        <td>{{ suppItem.key }}</td><td class="text-center">{{ suppItem.value }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- BADGE ROW -->
+<ng-template #badgeRow>
+  <div>
+    <span class=" badge badge-success mr-1">Variable: <span class="badge badge-light">{{ hitItem.variable }}</span></span>
+    <span class=" badge badge-success mr-1">License: <span class="badge badge-light">{{ hitItem.license }}</span></span>
+    <span class=" badge badge-success mr-1">Owner: <span class="badge badge-light">{{ hitItem.owner }}</span></span>
+    <span class=" badge badge-info mr-1 pull-right">Edited: <span class="badge badge-light">{{ hitItem.created }}</span></span>
+  </div>
+</ng-template>

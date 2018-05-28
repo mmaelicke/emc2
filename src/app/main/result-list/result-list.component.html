@@ -1,0 +1,24 @@
+<h1 class="page-header">
+  Results
+  <div class="btn-group btn-group-lg pull-right" role="group">
+    <button type="button" class="btn btn-outline-primary" (click)="listStyle='table';"><fa name="table"></fa></button>
+    <button type="button" class="btn btn-outline-primary" (click)="listStyle='plain';"><fa name="terminal"></fa></button>
+    <button type="button" class="btn btn-outline-primary" (click)="listStyle='list-item';"><fa name="list"></fa></button>
+    <button type="button" class="btn btn-outline-primary" (click)="listStyle='default';"><fa name="server"></fa></button>
+  </div>
+</h1>
+
+<table class="table table-striped" *ngIf="listStyle==='table'; else rawList">
+  <tr><th>Title</th><th>Variable</th><th>license</th></tr>
+  <tr *ngFor="let hit of hits">
+    <td>{{ hit.title }}</td><td>{{ hit.variable }}</td><td>{{ hit.license }}</td>
+  </tr>
+</table>
+
+<ng-template #rawList>
+  <app-result-list-item
+    *ngFor="let hit of hits;"
+    [hitItem]="hit"
+    [itemStyle]="listStyle"
+  ></app-result-list-item>
+</ng-template>
