@@ -14,6 +14,14 @@ export class MessageService {
   private addMessage(message: Message) {
     // add the new message and emit the new list
     this._messages.push(message);
+
+    // check if the message has a timeout
+    if (message.timeout) {
+      const index = this._messages.length - 1;
+      setTimeout(() => {
+        this.removeMessage(index);
+      }, message.timeout);
+    }
     this.messages.next(this._messages);
   }
 
@@ -23,29 +31,29 @@ export class MessageService {
     this.messages.next(this._messages);
   }
 
-  success(message: string, title= 'Success', closeable= true) {
+  success(message: string, title= 'Success', closeable= true, timeout= 20000) {
     // add a message with success category
-    const messageObject = new Message(message, title, 'success', closeable);
+    const messageObject = new Message(message, title, 'success', closeable, timeout);
     this.addMessage(messageObject);
   }
 
-  error(message: string, title= 'Error', closeable= true) {
+  error(message: string, title= 'Error', closeable= true, timeout?) {
     // add a message with danger category
-    const messageObject = new Message(message, title,'danger', closeable);
+    const messageObject = new Message(message, title,'danger', closeable, timeout);
     this.addMessage(messageObject);
     this.errorCount.next(this.errorCount.getValue() + 1);
   }
 
-  warning(message: string, title='Warning', closeable= true) {
+  warning(message: string, title='Warning', closeable= true, timeout?) {
     // add a message with warning category
-    const messageObject = new Message(message, title, 'warning', closeable);
+    const messageObject = new Message(message, title, 'warning', closeable, timeout);
     this.addMessage(messageObject);
     this.warningCount.next(this.warningCount.getValue() + 1);
   }
 
-  info(message: string, title='Info', closeable= true) {
+  info(message: string, title='Info', closeable= true, timeout?) {
     // add a message with info category
-    const messageObject = new Message(message, title, 'info', closeable);
+    const messageObject = new Message(message, title, 'info', closeable, timeout);
     this.addMessage(messageObject);
   }
 

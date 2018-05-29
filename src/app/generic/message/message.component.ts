@@ -26,7 +26,7 @@ export class MessageComponent implements OnInit, OnDestroy {
     );
   }
 
-  onRemoveMessage(index:number) {
+  onRemoveMessage(index: number) {
     this.messageService.removeMessage(index);
   }
 
