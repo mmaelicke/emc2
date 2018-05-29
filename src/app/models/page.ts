@@ -109,68 +109,68 @@ export class Page {
         },
         attribution: {
           type: 'keyword'
-        }
-      },
-      location: {
-        type: 'geo_shape',
-        precision: '1m',
-        tree: 'quadtree'
-      },
-      coordinates: {
-        type: 'geo_point'
-      },
-      description: {
-        type: 'text',
-        fields: {
-          en: {
-            type: 'text',
-            analyzer: 'english'
-          },
-          shingles: {
-            type: 'text',
-            analyzer: 'en_shingles'
+        },
+        location: {
+          type: 'geo_shape',
+          precision: '1m',
+          tree: 'quadtree'
+        },
+        coordinates: {
+          type: 'geo_point'
+        },
+        description: {
+          type: 'text',
+          fields: {
+            en: {
+              type: 'text',
+              analyzer: 'english'
+            },
+            shingles: {
+              type: 'text',
+              analyzer: 'en_shingles'
+            }
+          }
+        },
+        created: {
+          type: 'date',
+          format: 'yyyy-MM-dd HH:mm:ss'
+        },
+        edited: {
+          type: 'date',
+          format: 'yyyy-MM-dd HH:mm:ss'
+        },
+        supplementary: {
+          type: 'object'
+        },
+        info: {
+          type: 'object',
+          properties: {
+            votes: {type: 'integer'},
+            downloads: {type: 'integer'}
           }
         }
       },
-      created: {
-        type: 'date',
-        format: 'yyyy-MM-dd HH:mm:ss'
-      },
-      edited: {
-        type: 'date',
-        format: 'yyyy-MM-dd HH:mm:ss'
-      },
-      supplementary: {
-        type: 'object'
-      },
-      info: {
-        type: 'object',
-        properties: {
-          votes: {type: 'integer'},
-          downloads: {type: 'integer'}
-        }
-      }
-    },
-    dynamic_templates: [
-      {
-        supplementary_mapping: {
-          path_match: 'page.supplementary.*',
-          match_mapping_type: 'string',
-          mapping: {
-            type: 'text',
-            fields: {
-              en: {
-                type: 'text',
-                analyzer: 'english'
-              },
-              raw: {
-                type: 'keyword'
+      dynamic_templates: [
+        {
+          supplementary_mapping: {
+            path_match: 'page.supplementary.*',
+            match_mapping_type: 'string',
+            mapping: {
+              type: 'text',
+              fields: {
+                en: {
+                  type: 'text',
+                  analyzer: 'english'
+                },
+                raw: {
+                  type: 'keyword'
+                }
               }
             }
           }
         }
-      }
-    ]
+      ]
+    }
   };
 
   getDefault() {

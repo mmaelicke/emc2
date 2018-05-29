@@ -1,0 +1,31 @@
+<div class="alert alert-danger" *ngIf="contexts.length === 0" role="alert">
+  The Elastic Server does not have a global index. Maybe you connected the wrong elasticsearch instance?<br>
+  If not, this is most likely a new application and you can
+  <a class="alert-link" (click)="onCreateGlobalContext()" href="">create a global context</a>.
+</div>
+<table class="table table-striped" *ngIf="contexts.length !== 0">
+  <tr><th>Context Name</th><th>part of</th><th>actions</th></tr>
+  <tr *ngFor="let context of contexts; let i = index">
+    <td>{{ context.name }}</td>
+    <td> {{ context.part_of }}</td>
+    <td>
+      <div *ngIf="context.name !== 'global'; else globContext">
+        <span style="color: darkorange; cursor: pointer" [routerLink]="['context', i]">
+        <fa name="pencil"></fa>
+      </span>
+        <span style="color: darkred; cursor: pointer" class="ml-1"
+              (click)="onDeleteContext(i)">
+        <fa name="times"></fa>
+      </span>
+      </div>
+      <ng-template #globContext>
+        <i>you cannot edit the global context</i>
+      </ng-template>
+    </td>
+  </tr>
+  <span style="color: darkgreen; cursor: pointer" [routerLink]="['context', 'new']">
+    <fa name="plus"></fa> add Context
+  </span>
+</table>
+
+<router-outlet></router-outlet>

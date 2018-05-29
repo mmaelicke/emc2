@@ -1,0 +1,52 @@
+<h2>Settings</h2>
+<h3>General</h3>
+<div class="form-group form-row">
+  <label for="listStyle" class="col-sm-4 col-form-label">Default result list style</label>
+  <div class="col-sm-8">
+    <select id="listStyle" class="form-control"
+            [(ngModel)]="defaultListStyle"
+            (change)="onDefaultListStyleChanged()">
+      <option value="table">Table layout</option>
+      <option value="plain">plain JSON</option>
+      <option value="list-item">List Items</option>
+      <option value="only_title">Only Titles</option>
+      <option value="default">Result Objects</option>
+    </select>
+  </div>
+</div>
+
+<h3>Elasticsearch</h3>
+<div class="form-group form-row">
+  <label for="elasticHost" class="col-sm-4 col-form-label">Elasticsearch Host Address</label>
+  <div class="col-sm-8">
+    <div class="input-group">
+      <input type="text" class="form-control" id="elasticHost"
+             [(ngModel)]="elasticHost"
+             (input)="onElasticHostChanged()">
+      <div class="input-group-append">
+        <div class="disabled btn btn-{{ elasticHostValid ? 'success' : 'danger' }}">
+          <fa name="{{ elasticHostValid ? 'check' : 'times' }}"></fa>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-group form-row">
+  <label for="refresh" class="col-sm-4 col-form-label">Refresh Connection Status</label>
+  <div class="col-sm-8">
+    <div class="input-group">
+      <input type="number" class="form-control" id="refresh"
+             [(ngModel)]="refreshStatus"
+             (change)="onRefreshStatusChanged()">
+      <div class="input-group-append">
+        <div class="input-group-text">
+          seconds
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4>Context Management</h4>
+<context-manager></context-manager>

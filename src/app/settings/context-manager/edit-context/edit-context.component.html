@@ -1,0 +1,36 @@
+<div class="row">
+  <div class="col col-xs-12 col-md-6 mx-auto">
+    <form (ngSubmit)="onSubmit()" #f="ngForm">
+
+      <div class="form-group">
+        <label for="name">Context Name</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="data.name" required>
+          <div class="input-group-append" *ngIf="data.id !== ''">
+            <div class="input-group-text">
+              ID: {{ data.id }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="part_of">Mark all parent Contexts</label>
+        <select class="form-control" id="part_of" name="part_of" multiple [(ngModel)]="data.part_of">
+          <option selected disabled>global</option>
+          <option *ngFor="let cname of contextsNames">{{ cname }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="mapping">Index mapping</label>
+        <textarea [rows]="editMode ? 1 : 15" class="form-control"
+                  id="mapping" name="mapping" [(ngModel)]="data.mapping"
+                  [disabled]="editMode"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="contextForm.invalid">Save</button>
+      <button type="button" class="btn btn-danger ml-2" (click)="onCancel()">Cancel</button>
+    </form>
+  </div>
+</div>
