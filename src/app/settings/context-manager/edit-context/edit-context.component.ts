@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {ElasticsearchService} from '../../../shared/elasticsearch/elasticsearch.service';
-import {Page} from '../../../models/page';
+import {PageIndex} from '../../../models/page.index';
 import {Context} from '../../../models/context.model';
 
 
@@ -46,7 +46,7 @@ export class EditContextComponent implements OnInit {
     } else {
       // not in edit mode
       this.editMode = false;
-      this.data.mapping = JSON.stringify(new Page().getDefault(), null, 4);
+      this.data.mapping = JSON.stringify(new PageIndex().getDefault(), null, 4);
       // console.log('new Mode');
     }
 

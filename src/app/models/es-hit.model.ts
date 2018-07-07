@@ -1,4 +1,4 @@
-export interface EsHit {
+export interface EsHitResults {
   took: number;
   timed_out: boolean;
   _shards: any;

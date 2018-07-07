@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 
 import { AppComponent } from './app.component';
@@ -26,6 +26,10 @@ import { MessageComponent } from './generic/message/message.component';
 import { ContextManagerComponent } from './settings/context-manager/context-manager.component';
 import { EditContextComponent } from './settings/context-manager/edit-context/edit-context.component';
 import {MessageService} from './shared/message.service';
+import { PageEditComponent } from './importer/page-edit/page-edit.component';
+import {TagInputModule} from 'ngx-chips';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MaplayersService} from './shared/maplayers.service';
 
 @NgModule({
   declarations: [
@@ -44,20 +48,25 @@ import {MessageService} from './shared/message.service';
     MessageComponent,
     ContextManagerComponent,
     EditContextComponent,
+    PageEditComponent,
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     AngularFontAwesomeModule,
-    LeafletModule,
-    AppRoutingModule
+    LeafletModule.forRoot(),
+    AppRoutingModule,
+    ReactiveFormsModule,
+    TagInputModule
   ],
   providers: [
     ElasticsearchService,
     SettingsService,
     ElasticTransportService,
     MessageService,
+    MaplayersService,
   ],
   bootstrap: [AppComponent]
 })
