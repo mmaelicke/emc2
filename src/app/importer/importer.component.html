@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col col-xs-10 mx-auto">
+    <div class="input-group" *ngIf="allowImport; else importNotAllowed">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Context:</span>
+      </div>
+    <select [(ngModel)]="activeContext" class="form-control">
+      <ng-container *ngFor="let context of contexts; let i = index">
+        <option *ngIf="context.name !== 'global'" value="{{context.index}}" [selected]="i===0">
+          {{ context.name | uppercase   }}&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;part of: {{ context.part_of }}&nbsp;&nbsp;|&nbsp;&nbsp;Index: {{ context.index }}
+        </option>
+      </ng-container>
+    </select>
+    </div>
+  </div>
+
+  <ng-template #importNotAllowed>
+    <div class="alert alert-warning">
+      <h4 class="alert-heading">No importable Context found</h4>
+        No Context with an existing index definition could be found. Most likely because the global Context
+        is the only defined Context. <a routerLink="/settings" class="alert-link">Create a new Context</a>,
+        where your imported data should live.
+    </div>
+  </ng-template>
+</div>
+
+<!-- DEVEPOMENT needs a ngIF importallowed -->
+<div class="row">
+  <div class="col col-xs-12">
+    <app-page-edit></app-page-edit>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col col-xs-12">
+    <input type="file" (change)="preview($event)">
+  </div>
+</div>
+<hr>
+<p>Development: activeContext: {{ activeContext }}</p>
+<textarea cols="30" rows="10">{{ fileString }}</textarea>

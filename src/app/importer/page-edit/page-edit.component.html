@@ -1,0 +1,153 @@
+<div class="row">
+  <div class="col col-sx-12">
+    <form [formGroup]="pageForm" (ngSubmit)="onSubmit()">
+      <input type="hidden" formControlName="id">
+      <input type="hidden" formControlName="created" [value]="'peter'" name="created">
+      <input type="hidden" formControlName="edited">
+      <input type="hidden" formControlName="location">
+
+      <div class="row">
+        <div class="col col-md-6">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" formControlName="title" class="form-control">
+          </div>
+        </div>
+
+        <div class="col col-md-6">
+          <div class="form-group">
+            <label for="identifiers">Identifiers</label>
+            <tag-input id="identifiers" class="form-control" [ngModel]="identifiers"
+                       formControlName="identifiers"></tag-input>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col col-md-6">
+          <div class="form-group">
+            <label for="variable">Variable</label>
+            <select id="variable" formControlName="variable" class="form-control">
+              <option *ngFor="let variable of variables">{{ variable }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col col-md-6">
+          <div class="form-group">
+            <label for="newVariable">Add a new variable</label>
+            <div class="input-group">
+              <input type="text" class="form-control"
+                     id="newVariable"
+                     [(ngModel)]="newVariable"
+                     (keypress)="onAddNewVariable($event)"
+                     [ngModelOptions]="{standalone: true}">
+              <div class="input-group-append">
+                <button type="button" class="btn btn-success" [disabled]="newVariable.length===0"
+                        (click)="onAddNewVariable()">Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" cols="30" rows="4" class="form-control" formControlName="description"></textarea>
+      </div>
+
+      <div class="row">
+        <div class="col col-md-6">
+          <div class="form-group">
+            <label for="license">Data License</label>
+            <select id="license" class="form-control" formControlName="license">
+              <option>CC Zero 1.0</option>
+              <option>CC BY 3.0</option>
+              <option>CC BY-SA 4.0</option>
+              <option>CC BY-SA-NC 4.0</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col col-md-6">
+          <div class="form-group">
+            <label for="owner">Owner</label>
+            <input type="text" id="owner" class="form-control" formControlName="owner">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="attribution">Attribution</label>
+        <input type="text" id="attribution" class="form-control" formControlName="attribution">
+      </div>
+
+      <div class="card">
+        <div class="card-header">Coordinates</div>
+        <div class="row card-body pb-1" formGroupName="coordinates">
+                <div class="col col-xs-6">
+                  <div class="input-group">
+                    <input type="number" class="form-control" min="0" max="180" step="1e-4"
+                           formControlName="lat" (input)="onCoordinateChanged()">
+                    <div class="input-group-append">
+                      <div class="input-group-text"> Lat</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col col-xs-6">
+                  <div class="input-group">
+                    <input type="number" class="form-control" min="0" max="180" step="1e-4"
+                           formControlName="lon" (input)="onCoordinateChanged()">
+                    <div class="input-group-append">
+                      <div class="input-group-text"> Lat</div>
+                    </div>
+                  </div>
+                </div>
+        </div>
+
+        <div class="map" id="coordinateMap" style="height: 300px;"
+             leaflet
+             [leafletZoom]="14"
+             [leafletFitBounds]="fitBounds"
+             [leafletLayers]="mapLayers"
+             [leafletCenter]="activeCoordinate"
+             (leafletMapReady)="onMapReady($event)"
+        ></div>
+        <div class="row">
+          <div class="col col-xs-12">
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text">Location: </span></div>
+              <input type="text" class="form-control" formControlName="location">
+              <div class="input-group-append"><span class="input-group-text">WKT</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-header">Supplementary information</div>
+        <table class="table table-striped card-body" formArrayName="supplementary">
+          <tr><th>identifier [key]</th><th>data type</th><th>value</th><th>action</th></tr>
+          <tr *ngFor="let supp of pageForm.get('supplementary').controls; let i = index" [formGroupName]="i">
+            <td><input type="text" class="form-control" formControlName="key"></td>
+            <td><i>not implemented yet</i></td>
+            <td><input type="text" class="form-control" formControlName="value"></td>
+            <td><span style="color: red; cursor: pointer" (click)="onRemoveSupplementary(i)">
+              <fa name="times"></fa>&nbsp; remove
+            </span></td>
+          </tr>
+          <tr><td><span style="color: green; cursor: pointer" (click)="onAddSupplementary()">
+            <fa name="plus"></fa>&nbsp; add Supplementary Information</span>
+          </td></tr>
+        </table>
+      </div>
+
+      <div class="row">
+        <button type="submit" class="btn btn-success m-2" [disabled]="pageForm.invalid">Import</button>
+        <button type="button" class="btn btn-danger m-2" (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
