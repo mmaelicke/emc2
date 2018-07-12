@@ -10,7 +10,8 @@ import {Subscription} from 'rxjs/internal/Subscription';
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   queryString = '';
-  queryContext = 'global';
+  queryContextName = 'global';
+  queryContext: Context;
   queryVariable = '-- all --';
   searchOnType = true;
   collapsed = false;
@@ -24,16 +25,28 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // get the current contexts and subscribe to changes
     this.contexts = this.es.getContexts();
+    this.onQueryContextChanged();
     this.contextSubscription = this.es.contexts.subscribe(
       (contexts: Context[]) => {
         this.contexts = contexts;
+        this.onQueryContextChanged();
       }
     );
   }
 
+  onQueryContextChanged() {
+    this.queryContext = this.contexts.find(c => c.name === this.queryContextName);
+  }
+
   // called whenever something changed
   onSearchConditionChanged() {
-    this.es.onQueryStringChanged(this.queryString, this.queryContext, this.queryVariable);
+    this.es.onQueryStringChanged(this.queryString, this.queryContextName, this.queryVariable);
+    //
+    if (this.queryVariable !== '-- all --') {
+      this.es.search(this.queryString, this.queryContext, this.queryVariable);
+    } else {
+      this.es.search(this.queryString, this.queryContext);
+    }
   }
 
   // The input event on the Search bar has its own method to threshold and deactive

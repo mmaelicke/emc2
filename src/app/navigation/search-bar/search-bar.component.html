@@ -21,7 +21,7 @@
   <div class="col col-sm-4">
     <div class="input-group">
       <span class="input-group-prepend input-group-text bg-dark text-light">Context: </span>
-      <select class="form-control form-control-dark" (change)="onSearchConditionChanged()" [(ngModel)]="queryContext">
+      <select class="form-control form-control-dark" (change)="onQueryContextChanged();onSearchConditionChanged()" [(ngModel)]="queryContextName">
         <option class="bg-dark text-light" value="global">-- global --</option>
         <ng-container *ngFor="let context of contexts">
           <option class="bg-dark text-light"
