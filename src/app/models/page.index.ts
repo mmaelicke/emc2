@@ -132,12 +132,10 @@ export class PageIndex {
           }
         },
         created: {
-          type: 'date',
-          format: 'yyyy-MM-dd HH:mm:ss'
+          type: 'date'
         },
         edited: {
-          type: 'date',
-          format: 'yyyy-MM-dd HH:mm:ss'
+          type: 'date'
         },
         supplementary: {
           type: 'object'

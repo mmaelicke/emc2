@@ -12,7 +12,7 @@ const appRoutes = [
       {path: 'context/new', component: EditContextComponent},
       {path: 'context/:id', component: EditContextComponent}
     ]},
-  {path: '', component: MainComponent, pathMath: 'full'},
+  {path: '', component: MainComponent, pathMatch: 'full'},
   {path: '**', component: PageNotFoundComponent}
 ];
 

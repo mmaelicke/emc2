@@ -3,7 +3,8 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 export class SettingsService {
   private settings: {
     elasticHost: string[],
-    refreshStatus: number
+    refreshStatus: number,
+    matchType: string,
   };
 
   // this should be removed into a subject
@@ -14,7 +15,8 @@ export class SettingsService {
   constructor() {
     this.settings = {
       'elasticHost': ['http://localhost:9200'],
-      'refreshStatus': 20000
+      'refreshStatus': 20000,
+      'matchType': 'best_field',
     };
 
     // DEV: prepopulation

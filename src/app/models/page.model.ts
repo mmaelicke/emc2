@@ -7,10 +7,11 @@ export class Page {
   variable: string;
   license: string;
   attribution: string;
+  owner: string;
   coordinates: {lat: number, lon: number};
   location: string;
-  created: string;
-  edited: string;
+  created: Date;
+  edited: Date;
   supplementary: {};
 
   constructor() {}
