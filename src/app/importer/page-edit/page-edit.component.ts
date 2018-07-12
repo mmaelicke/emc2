@@ -1,7 +1,10 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Icon, LatLng, latLng, LatLngBounds, LeafletMouseEvent, Map, Marker, marker} from 'leaflet';
 import {MaplayersService} from '../../shared/maplayers.service';
+import {Page} from '../../models/page.model';
+import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
+import {Context} from '../../models/context.model';
 
 @Component({
   selector: 'app-page-edit',
@@ -9,19 +12,25 @@ import {MaplayersService} from '../../shared/maplayers.service';
   styleUrls: ['./page-edit.component.css'],
 })
 export class PageEditComponent implements OnInit {
+  @Input() context: Context;
+  pageForm: FormGroup;
+
+  // if started in edit mode, the page is set as property
+  page: Page;
+
+  // form elements
   variables = ['air temperature', 'air pressure', 'relative humidity'];
   newVariable = '';
 
+  // leaflet map setup
   activeCoordinate = latLng([48.000, 7.8212]);
   icon = new Icon({iconUrl: '../assets/img/marker.png', iconSize: [64, 64], iconAnchor: [32, 64]});
-
   markerLayer = marker(this.activeCoordinate, {icon: this.icon});
   mapLayers = [this.layerService.layer.terrain, this.markerLayer];
   fitBounds: LatLngBounds;
 
-  pageForm: FormGroup;
-
-  constructor(private layerService: MaplayersService, private changeDetector: ChangeDetectorRef) { }
+  constructor(private layerService: MaplayersService, private changeDetector: ChangeDetectorRef,
+              private es: ElasticsearchService) { }
 
   ngOnInit() {
     // as soon as editing is implemented, check edit mode here
@@ -68,7 +77,7 @@ export class PageEditComponent implements OnInit {
       this.changeDetector.detectChanges();
 
       // update location
-      this.pageForm.get('location').setValue('POINT (' + lon + ' ' + lon + ')');
+      this.pageForm.get('location').setValue('POINT (' + lon + ' ' + lat + ')');
     }
   }
 
@@ -81,14 +90,13 @@ export class PageEditComponent implements OnInit {
     });
   }
 
-
   initEmptyForm() {
     this.pageForm = new FormGroup({
       id: new FormControl(),
       title: new FormControl(null, {validators: [ Validators.required ]}),
       identifiers: new FormControl('', []),
-      description: new FormControl(null, {validators: [ Validators.required ]}),
-      variable: new FormControl(null, {validators: [ Validators.required ]}),
+      description: new FormControl(null),
+      variable: new FormControl(null),
       license: new FormControl(),
       owner: new FormControl(),
       attribution: new FormControl(),
@@ -105,7 +113,49 @@ export class PageEditComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.pageForm);
+    let editPage: Page;
+    const value = this.pageForm.value;
+
+    if (this.page) {
+      editPage = this.page;
+      editPage.edited = new Date();
+    } else {
+      editPage = new Page();
+      editPage.created = new Date();
+      editPage.edited = editPage.created;
+    }
+
+    // set the Form properties
+    editPage.id = value.id;
+    editPage.title = value.title;
+    editPage.identifiers = [];
+    if (value.identifiers) {
+      value.identifiers.forEach(e =>  editPage.identifiers.push(e.value));
+    }
+    editPage.description = value.description;
+    editPage.variable = value.variable;
+    editPage.license = value.license;
+    editPage.attribution = value.attribution;
+    editPage.owner = value.owner;
+    editPage.coordinates = value.coordinates;
+    editPage.location = value.location;
+    editPage.supplementary = {};
+    if (value.supplementary) {
+      value.supplementary.forEach(e => editPage.supplementary[e.key] = e.value);
+    }
+
+    // check if there is a Context
+    if (!this.context) {
+      console.log('[PAGE-EDIT] I lost the active context...');
+    }
+
+    // create the Page
+    this.es.createPage(editPage, this.context);
+    // console.log(editPage);
+
+    // TODO: change this to a routing to the overview Page as soon as I implemented this
+    // until then, just cancel the form
+    this.onCancel();
   }
 
   onCancel() {

@@ -14,7 +14,8 @@ export class ImporterComponent implements OnInit, OnDestroy {
   // Context management
   contexts: Context[];
   contextSubscription: Subscription;
-  activeContext = 'global';
+  activeContextName = 'global';
+  activeContext: Context;
   allowImport = false;
 
   // File properties
@@ -23,15 +24,25 @@ export class ImporterComponent implements OnInit, OnDestroy {
   constructor(private es: ElasticsearchService) { }
 
   ngOnInit() {
-    // load the Contexts
+    // load the Contexts and identify the active context
     this.contexts = this.es.getContexts();
+    this.onActiveContextChanged();
+
+    // manage the Subscription
     this.contextSubscription = this.es.contexts.subscribe(
       (contexts: Context[]) => {
         this.contexts = contexts;
         this.checkContexts();
+        this.onActiveContextChanged();
       }
     );
     this.checkContexts();
+  }
+
+  onActiveContextChanged() {
+    // the user changed the activeContextName, therefore it has to be loaded again
+    this.activeContext = this.contexts.find(c => c.name === this.activeContextName);
+    // console.log(this.activeContextName, this.activeContext);
   }
 
   private checkContexts() {

@@ -1,12 +1,12 @@
-<div class="row">
+<div class="row mt-3">
   <div class="col col-xs-10 mx-auto">
     <div class="input-group" *ngIf="allowImport; else importNotAllowed">
       <div class="input-group-prepend">
         <span class="input-group-text">Context:</span>
       </div>
-    <select [(ngModel)]="activeContext" class="form-control">
+    <select [(ngModel)]="activeContextName" class="form-control" (change)="onActiveContextChanged()">
       <ng-container *ngFor="let context of contexts; let i = index">
-        <option *ngIf="context.name !== 'global'" value="{{context.index}}" [selected]="i===0">
+        <option *ngIf="context.name !== 'global'" value="{{context.name}}" [selected]="i===0">
           {{ context.name | uppercase   }}&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;part of: {{ context.part_of }}&nbsp;&nbsp;|&nbsp;&nbsp;Index: {{ context.index }}
         </option>
       </ng-container>
@@ -27,7 +27,7 @@
 <!-- DEVEPOMENT needs a ngIF importallowed -->
 <div class="row">
   <div class="col col-xs-12">
-    <app-page-edit></app-page-edit>
+    <app-page-edit [context]="activeContext" *ngIf="allowImport"></app-page-edit>
   </div>
 </div>
 
@@ -37,5 +37,5 @@
   </div>
 </div>
 <hr>
-<p>Development: activeContext: {{ activeContext }}</p>
+<p>Development: activeContext: {{ activeContextName }}</p>
 <textarea cols="30" rows="10">{{ fileString }}</textarea>
