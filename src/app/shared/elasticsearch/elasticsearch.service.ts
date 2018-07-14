@@ -1,17 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Hit} from '../../models/hit.model';
+import {Hit} from './hit.model';
 import {ElasticTransportService} from './elastic-transport.service';
 import {Context} from '../../models/context.model';
 import {MessageService} from '../message.service';
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {Page} from '../../models/page.model';
-import {IndexResult} from './index-result.model';
-import {EsHitResults} from '../../models/es-hit.model';
-
-export interface Variables {
-  name: string;
-  count: number;
-}
+import {IndexResponse, SearchResponse} from './elastic-response.model';
+import {Variables} from './elastic-response.model';
 
 @Injectable()
 export class ElasticsearchService {
@@ -19,16 +14,16 @@ export class ElasticsearchService {
   private lastStatus = 'inactive';
 
   // current Hits
-  // TODO replace the current Hits by Pages
-  currentHits: Hit[] = [];
+  private _hits: Hit[] = [];
   private _contexts: Context[] = [];
   private _variables: Variables[] = [];
   contexts = new BehaviorSubject<Context[]>(this._contexts);
   variables = new BehaviorSubject<Variables[]>(this._variables);
+  hits = new BehaviorSubject<Hit[]>(this._hits);
 
   // pages
-  private _pages: Page[] = [];
-  pages = new BehaviorSubject<Page[]>(this._pages);
+  // private _pages: Page[] = [];
+  // pages = new BehaviorSubject<Page[]>(this._pages);
 
   // parameters of the last search
   lastQueryTime: number;
@@ -82,7 +77,7 @@ export class ElasticsearchService {
 
   loadVariables(activeContext= 'global') {
     this.transport.getVariables(activeContext).subscribe(
-      (result:{took: number, timed_out:boolean, hits: any, _shards: any, aggregations: any}) => {
+      (result:{took: number, timed_out: boolean, hits: any, _shards: any, aggregations: any}) => {
         // load the new variables
         const buckets = result.aggregations.variables.buckets;
         this._variables = [];
@@ -175,7 +170,7 @@ export class ElasticsearchService {
 
   createPage(page: Page, context: Context) {
     this.transport.postPage(page, context, true).subscribe(
-      (result: IndexResult) => {
+      (result: IndexResponse) => {
         console.log(result);
         if ( (result._shards.failed !== 0) || (result.result !== 'created') ) {
           this.messages.error('[DEVELOPER]: [Elasicsearch Error]:<br>Indexing failed.<br>' + JSON.stringify(result));
@@ -187,25 +182,28 @@ export class ElasticsearchService {
     );
   }
 
-  private parseRawHits(raw: {took: number, timed_out: boolean, _shards: any, hits: any}) {
+  private parseRawHits(response: SearchResponse) {
     // save the last query parameters
-    this.lastQueryTime = raw.took;
-    this.lastTimedOut = raw.timed_out;
-    this.currentHitMeta = {total: raw.hits.total, max_score: raw.hits.max_score};
+    this.lastQueryTime = response.took;
+    this.lastTimedOut = response.timed_out;
+    this.currentHitMeta = {total: response.hits.total, max_score: response.hits.max_score};
 
     // build a Hit object for each hit
-    this.currentHits.length = 0;
+    this._hits = [];
 
-    raw.hits.hits.forEach((item, index) => {
-      this.currentHits.push(new Hit(item));
+    response.hits.hits.forEach((item, index) => {
+      this._hits.push(new Hit(item));
     });
+
+    // emit the new hits
+    this.hits.next(this._hits);
 
     // emit the new pages
-    this._pages.length = 0;
-    raw.hits.hits.forEach((item, index) => {
-      this._pages.push(new Page().from_source(item._source, item._id));
-    });
-    this.pages.next(this._pages.slice());
+    // this._pages.length = 0;
+    // raw.hits.hits.forEach((item, index) => {
+    //  this._pages.push(new Page().from_source(item._source, item._id));
+    // });
+    // this.pages.next(this._pages.slice());
   }
 
   onQueryStringChanged(queryString: string, context: string, variable: string) {
@@ -214,7 +212,10 @@ export class ElasticsearchService {
 
   search(queryString: string, context: Context, variable?: string) {
     this.transport.getSearch(queryString, context.name, variable).subscribe(
-      (value: EsHitResults) => { console.log(value); },
+      (searchResult: SearchResponse) => {
+        console.log(searchResult);
+        this.parseRawHits(searchResult);
+      },
       (error) => { console.log(error); }
     );
   }

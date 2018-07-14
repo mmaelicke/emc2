@@ -4,7 +4,7 @@ import {SettingsService} from '../settings.service';
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {map} from 'rxjs/operators';
 import {Context} from '../../models/context.model';
-import {EsHitResults} from '../../models/es-hit.model';
+import {SearchResponse} from './elastic-response.model';
 import {throwError} from 'rxjs/internal/observable/throwError';
 import {Page} from '../../models/page.model';
 
@@ -41,7 +41,7 @@ export class ElasticTransportService {
         this.settings.elasticHost.getValue() + '/mgn/context/_search?size=' + size
       ).pipe(
         map(
-          (data: EsHitResults) => {
+          (data: SearchResponse) => {
             const contexts: Context[] = [];
             for (const context of data.hits.hits) {
               contexts.push(new Context(context._id, context._source.name, context._source.part_of, context._source.index));

@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
-import {Hit} from '../../models/hit.model';
+import {Hit} from '../../shared/elasticsearch/hit.model';
 import {SettingsService} from '../../shared/settings.service';
 import {Subscription} from 'rxjs/internal/Subscription';
 
@@ -11,6 +11,7 @@ import {Subscription} from 'rxjs/internal/Subscription';
 })
 export class ResultListComponent implements OnInit, OnDestroy {
   hits: Hit[];
+  hitsSubscription: Subscription;
   listStyle: string;
   listStyleSubscription: Subscription;
 
@@ -26,12 +27,18 @@ export class ResultListComponent implements OnInit, OnDestroy {
       }
     );
 
-    // maybe this has to be bound by an observable
-    this.hits = this.es.currentHits;
+    // load the current hits and subscribe to changes
+    this.hits = this.es.hits.getValue();
+    this.hitsSubscription = this.es.hits.subscribe(
+      (hits: Hit[]) => {
+        this.hits = hits;
+      }
+    );
   }
 
   ngOnDestroy() {
     this.listStyleSubscription.unsubscribe();
+    this.hitsSubscription.unsubscribe();
   }
 
 }

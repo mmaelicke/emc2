@@ -1,7 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ElasticsearchService, Variables} from '../../shared/elasticsearch/elasticsearch.service';
+import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
 import {Context} from '../../models/context.model';
 import {Subscription} from 'rxjs/internal/Subscription';
+import {Variables} from '../../shared/elasticsearch/elastic-response.model';
 
 @Component({
   selector: 'search-bar',

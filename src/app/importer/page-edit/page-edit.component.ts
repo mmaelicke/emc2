@@ -3,9 +3,10 @@ import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Icon, LatLng, latLng, LatLngBounds, LeafletMouseEvent, Map, Marker, marker} from 'leaflet';
 import {MaplayersService} from '../../shared/maplayers.service';
 import {Page} from '../../models/page.model';
-import {ElasticsearchService, Variables} from '../../shared/elasticsearch/elasticsearch.service';
+import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
 import {Context} from '../../models/context.model';
 import {Subscription} from 'rxjs/internal/Subscription';
+import {Variables} from '../../shared/elasticsearch/elastic-response.model';
 
 @Component({
   selector: 'app-page-edit',
