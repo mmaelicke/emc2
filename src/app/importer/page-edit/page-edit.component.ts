@@ -1,17 +1,18 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Icon, LatLng, latLng, LatLngBounds, LeafletMouseEvent, Map, Marker, marker} from 'leaflet';
 import {MaplayersService} from '../../shared/maplayers.service';
 import {Page} from '../../models/page.model';
-import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
+import {ElasticsearchService, Variables} from '../../shared/elasticsearch/elasticsearch.service';
 import {Context} from '../../models/context.model';
+import {Subscription} from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-page-edit',
   templateUrl: './page-edit.component.html',
   styleUrls: ['./page-edit.component.css'],
 })
-export class PageEditComponent implements OnInit {
+export class PageEditComponent implements OnInit, OnDestroy {
   @Input() context: Context;
   pageForm: FormGroup;
 
@@ -19,7 +20,9 @@ export class PageEditComponent implements OnInit {
   page: Page;
 
   // form elements
-  variables = ['air temperature', 'air pressure', 'relative humidity'];
+  // variables = ['air temperature', 'air pressure', 'relative humidity'];
+  variables: Variables[] = [];
+  variablesSubscription: Subscription;
   newVariable = '';
 
   // leaflet map setup
@@ -36,6 +39,14 @@ export class PageEditComponent implements OnInit {
     // as soon as editing is implemented, check edit mode here
     this.initEmptyForm();
     this.onCoordinateChanged();
+
+    // load the variables
+    this.variables = this.es.variables.getValue();
+    this.variablesSubscription = this.es.variables.subscribe(
+      (variables: Variables[]) => {
+        this.variables = variables;
+      }
+    );
   }
 
   onAddSupplementary() {
@@ -59,7 +70,7 @@ export class PageEditComponent implements OnInit {
       }
     } else {
       // add the new variable and empty the input
-      this.variables.push(this.newVariable);
+      this.variables.push({name: this.newVariable, count: 0});
       this.pageForm.get('variable').setValue(this.newVariable);
       this.newVariable = '';
     }
@@ -160,6 +171,10 @@ export class PageEditComponent implements OnInit {
 
   onCancel() {
     this.pageForm.reset();
+  }
+
+  ngOnDestroy() {
+    this.variablesSubscription.unsubscribe();
   }
 
 }

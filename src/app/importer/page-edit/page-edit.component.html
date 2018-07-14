@@ -27,7 +27,7 @@
           <div class="form-group">
             <label for="variable">Variable</label>
             <select id="variable" formControlName="variable" class="form-control">
-              <option *ngFor="let variable of variables">{{ variable }}</option>
+              <option *ngFor="let variable of variables" [value]="variable.name">{{ variable.name }}</option>
             </select>
           </div>
         </div>
