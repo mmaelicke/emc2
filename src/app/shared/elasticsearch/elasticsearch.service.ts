@@ -77,7 +77,7 @@ export class ElasticsearchService {
 
   loadVariables(activeContext= 'global') {
     this.transport.getVariables(activeContext).subscribe(
-      (result:{took: number, timed_out: boolean, hits: any, _shards: any, aggregations: any}) => {
+      (result: {took: number, timed_out: boolean, hits: any, _shards: any, aggregations: any}) => {
         // load the new variables
         const buckets = result.aggregations.variables.buckets;
         this._variables = [];
@@ -118,7 +118,7 @@ export class ElasticsearchService {
             for (const alias of aliases) {
               this.transport.putAlias(context.index, alias).subscribe(
                 value => {},
-                error => {this.messages.warning('Could not make context ' + context.name + ' part of ' + alias);}
+                error => {this.messages.warning('Could not make context ' + context.name + ' part of ' + alias); }
               );
             }
             this.messages.success('created context ' + context.name, 'Created Context');

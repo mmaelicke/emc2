@@ -1,0 +1,29 @@
+language: node_js
+node_js:
+  - "10"
+
+dist: "trusty"
+sudo: false
+
+cache:
+  yarn: true
+  directories:
+    - "node_modules"
+
+install:
+  - yarn add @angular/cli
+  - yarn install --production=false
+
+script:
+  - yarn build --base-href https://localhost:4200
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GH_TOKEN
+  local_dir: dist/cv
+  target-branch: dist
+  name: Mirko Mälicke
+  email: mirko@maelicke-online.de
+  on:
+    branch: dist
