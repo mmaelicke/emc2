@@ -5,6 +5,7 @@ export class SettingsService {
     elasticHost: string[],
     refreshStatus: number,
     matchType: string,
+    maxVariableCount: number,
   };
 
   // this should be removed into a subject
@@ -16,7 +17,8 @@ export class SettingsService {
     this.settings = {
       'elasticHost': ['http://localhost:9200'],
       'refreshStatus': 20000,
-      'matchType': 'best_field',
+      'matchType': 'best_fields',
+      'maxVariableCount': 100,
     };
 
     // DEV: prepopulation

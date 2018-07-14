@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
+import {ElasticsearchService, Variables} from '../../shared/elasticsearch/elasticsearch.service';
 import {Context} from '../../models/context.model';
 import {Subscription} from 'rxjs/internal/Subscription';
 
@@ -19,6 +19,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   // populate by all possible values
   contexts: Context[];
   contextSubscription: Subscription;
+  variables: Variables[];
+  variablesSubscription: Subscription;
 
   constructor(private es: ElasticsearchService) { }
 
@@ -32,10 +34,21 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.onQueryContextChanged();
       }
     );
+
+    // get the current variables and subscribe to changes
+    this.variables = this.es.variables.getValue();
+    this.variablesSubscription = this.es.variables.subscribe(
+      (variables: Variables[]) => {
+        this.variables = variables;
+      }
+    );
   }
 
   onQueryContextChanged() {
     this.queryContext = this.contexts.find(c => c.name === this.queryContextName);
+
+    // reload the variables
+    this.es.loadVariables(this.queryContextName);
   }
 
   // called whenever something changed
@@ -59,6 +72,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.contextSubscription.unsubscribe();
+    this.variablesSubscription.unsubscribe();
   }
 
 }

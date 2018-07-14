@@ -35,9 +35,9 @@
       <span class="input-group-prepend input-group-text bg-dark text-light">Variable: </span>
       <select class="form-control form-control-dark" (change)="onSearchConditionChanged()" [(ngModel)]="queryVariable">
         <option class="bg-dark text-light">-- all --</option>
-        <option class="bg-dark text-light">Variable 1</option>
-        <option class="bg-dark text-light">Variable 2</option>
-        <option class="bg-dark text-light">Variable 3</option>
+        <option class="bg-dark text-light" *ngFor="let variable of variables" [value]="variable.name">
+          {{ variable.name }} <span class="badge badge-dark">{{ variable.count }}{{ variable.count == 100 ? '+': '' }}</span>
+        </option>
       </select>
     </div>
   </div>

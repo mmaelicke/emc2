@@ -124,7 +124,7 @@ export class ElasticTransportService {
     }
   }
 
-  putIndex(name: string, settings?: {}, mappings?:{}) {
+  putIndex(name: string, settings?: {}, mappings?: {}) {
     if (!this.isActive) {
       return throwError(this.notActiveError);
     }
@@ -185,7 +185,7 @@ export class ElasticTransportService {
 
     const multi_match = {
       'query': queryString,
-      'type': 'best_field',
+      'type': 'best_fields',
       'tie_breaker': 0.3
     };
 
@@ -211,6 +211,28 @@ export class ElasticTransportService {
 
     return this.http.post(
       this.settings.elasticHost.getValue() + '/' + contextName + '/page/_search', { query: query }
+    );
+  }
+
+  getVariables(contextName: string) {
+    if (!this.isActive) {
+      return throwError(this.notActiveError);
+    }
+
+    const aggBody = {
+      'size': 0,
+      'aggs': {
+        'variables': {
+          'terms': {
+            'field': 'variable.raw',
+            'size': 100
+          }
+        }
+      }
+    };
+
+    return this.http.post(
+      this.settings.elasticHost.getValue() + '/' + contextName + '/page/_search', aggBody
     );
   }
 }

@@ -8,6 +8,11 @@ import {Page} from '../../models/page.model';
 import {IndexResult} from './index-result.model';
 import {EsHitResults} from '../../models/es-hit.model';
 
+export interface Variables {
+  name: string;
+  count: number;
+}
+
 @Injectable()
 export class ElasticsearchService {
   isActive = false;
@@ -17,8 +22,9 @@ export class ElasticsearchService {
   // TODO replace the current Hits by Pages
   currentHits: Hit[] = [];
   private _contexts: Context[] = [];
+  private _variables: Variables[] = [];
   contexts = new BehaviorSubject<Context[]>(this._contexts);
-  variables = [];
+  variables = new BehaviorSubject<Variables[]>(this._variables);
 
   // pages
   private _pages: Page[] = [];
@@ -41,12 +47,14 @@ export class ElasticsearchService {
         if (this.lastStatus === 'inactive' && this.isActive) {
           // the service just got active, reload all contexts
           this.loadContexts();
+
+          // reload all variables
+          this.loadVariables();
+
           this.messages.success('Elastic Cluster online.');
         }
       }
     );
-    // development
-    this.parseRawHits(raw);
   }
 
   getContexts() {
@@ -69,6 +77,21 @@ export class ElasticsearchService {
         this._contexts = [];
         this.contexts.next(this._contexts.slice());
       }
+    );
+  }
+
+  loadVariables(activeContext= 'global') {
+    this.transport.getVariables(activeContext).subscribe(
+      (result:{took: number, timed_out:boolean, hits: any, _shards: any, aggregations: any}) => {
+        // load the new variables
+        const buckets = result.aggregations.variables.buckets;
+        this._variables = [];
+        buckets.forEach(bucket => this._variables.push({name: bucket.key, count: bucket.doc_count}));
+
+        // emit the new variables lists
+        this.variables.next(this._variables);
+      },
+      error => { this.messages.error('[DEVELOPER]: Cannot load variables.<br>' + error); }
     );
   }
 
@@ -196,340 +219,3 @@ export class ElasticsearchService {
     );
   }
 }
-
-const raw = {
-  'took' : 15,
-  'timed_out' : false,
-  '_shards' : {
-    'total' : 2,
-    'successful' : 2,
-    'skipped' : 0,
-    'failed' : 0
-  },
-  'hits' : {
-    'total' : 62,
-    'max_score' : 4.2881956,
-    'hits' : [
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : '6sFDs2EB9c-OisfWTlf_',
-        '_score' : 4.2881956,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : 'Sap Flow sensor (East 30 Sensors)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084884662771,
-            'lon' : 5.80788292162056
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80788292162056 49.8084884662771)',
-          'variable' : 'sap flow',
-          'identifiers' : [
-            1033,
-            'ST::a'
-          ],
-          'description' : 'Sap flow velocity measured with East 30 Sensors heat pulse Sap Flow Sensors',
-          'title' : 'sap flow [m/s] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'usFDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084854001542,
-            'lon' : 5.80783112603448
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80783112603448 49.8084854001542)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1056,
-            'ST::i'
-          ],
-          'description' : 'Volumetric water of soil content measured at 30 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'u8FDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084854001542,
-            'lon' : 5.80783112603448
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80783112603448 49.8084854001542)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1055,
-            'ST::i'
-          ],
-          'description' : 'Volumetric water of soil content measured at 10 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'vMFDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084769353121,
-            'lon' : 5.80775249986879
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80775249986879 49.8084769353121)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1062,
-            'ST::o'
-          ],
-          'description' : 'Volumetric water of soil content measured at 30 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'vcFDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084483270408,
-            'lon' : 5.80781183332555
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80781183332555 49.8084483270408)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1060,
-            'ST::l'
-          ],
-          'description' : 'Volumetric water of soil content measured at 50 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'vsFDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084769353121,
-            'lon' : 5.80775249986879
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80775249986879 49.8084769353121)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1061,
-            'ST::o'
-          ],
-          'description' : 'Volumetric water of soil content measured at 10 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'v8FDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084854001542,
-            'lon' : 5.80783112603448
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80783112603448 49.8084854001542)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1064,
-            'ST::i'
-          ],
-          'description' : 'Volumetric water of soil content measured at 80 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'wMFDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084769353121,
-            'lon' : 5.80775249986879
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80775249986879 49.8084769353121)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1063,
-            'ST::o'
-          ],
-          'description' : 'Volumetric water of soil content measured at 50 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'wcFDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : '5TE sensor (Decagon Devices)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084483270408,
-            'lon' : 5.80781183332555
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80781183332555 49.8084483270408)',
-          'variable' : 'volumetric water content',
-          'identifiers' : [
-            1059,
-            'ST::l'
-          ],
-          'description' : 'Volumetric water of soil content measured at 30 cm with Decagon 5TE',
-          'title' : 'volumetric water content [%] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      },
-      {
-        '_index' : 'caos_v1',
-        '_type' : 'page',
-        '_id' : 'wsFDs2EB9c-OisfWTVXz',
-        '_score' : 3.7078974,
-        '_source' : {
-          'supplementary' : {
-            'elevation' : 429.0,
-            'geology' : 'schist',
-            'spacing' : '5min',
-            'site_comment' : 'midslope S',
-            'land use' : 'forest',
-            'sensor' : 'CS 215 sensor (Campbell Scientific)'
-          },
-          'coordinates' : {
-            'lat' : 49.8084707084095,
-            'lon' : 5.80780864054337
-          },
-          'license' : 'Usage without permission not allowed',
-          'edited' : '2018-02-20 07:45:02',
-          'location' : 'POINT (5.80780864054337 49.8084707084095)',
-          'variable' : 'air temperature',
-          'identifiers' : [
-            1085,
-            'ST::z'
-          ],
-          'description' : 'Air temperature measured at 2 m with Campbell CS 215',
-          'title' : 'air temperature [C] data measured within the CAOS project',
-          'created' : '2018-02-20 07:45:02',
-          'owner' : 'German Research Centre for Geosciences GFZ (Sektion 5.4 - Hydrology)'
-        }
-      }
-    ]
-  }
-};
