@@ -21,7 +21,7 @@ deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GH_TOKEN
-  local_dir: dist/emc2
+  local_dir: dist
   target-branch: dist
   name: Mirko Mälicke
   email: mirko@maelicke-online.de
