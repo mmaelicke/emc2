@@ -16,7 +16,7 @@
         <div class="col col-md-6">
           <div class="form-group">
             <label for="identifiers">Identifiers</label>
-            <tag-input id="identifiers" class="form-control" [ngModel]="identifiers"
+            <tag-input id="identifiers" class="form-control"
                        formControlName="identifiers"></tag-input>
           </div>
         </div>
@@ -128,7 +128,8 @@
         <div class="card-header">Supplementary information</div>
         <table class="table table-striped card-body" formArrayName="supplementary">
           <tr><th>identifier [key]</th><th>data type</th><th>value</th><th>action</th></tr>
-          <tr *ngFor="let supp of pageForm.get('supplementary').controls; let i = index" [formGroupName]="i">
+          <!--<tr *ngFor="let supp of (<FormArray>pageForm.get('supplementary')).controls; let i = index" [formGroupName]="i">-->
+          <tr *ngFor="let supp of supplementary.controls; let i = index" [formGroupName]="i">
             <td><input type="text" class="form-control" formControlName="key"></td>
             <td><i>not implemented yet</i></td>
             <td><input type="text" class="form-control" formControlName="value"></td>

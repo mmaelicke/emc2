@@ -39,19 +39,19 @@ export class MessageService {
 
   error(message: string, title= 'Error', closeable= true, timeout?) {
     // add a message with danger category
-    const messageObject = new Message(message, title,'danger', closeable, timeout);
+    const messageObject = new Message(message, title, 'danger', closeable, timeout);
     this.addMessage(messageObject);
     this.errorCount.next(this.errorCount.getValue() + 1);
   }
 
-  warning(message: string, title='Warning', closeable= true, timeout?) {
+  warning(message: string, title= 'Warning', closeable= true, timeout?) {
     // add a message with warning category
     const messageObject = new Message(message, title, 'warning', closeable, timeout);
     this.addMessage(messageObject);
     this.warningCount.next(this.warningCount.getValue() + 1);
   }
 
-  info(message: string, title='Info', closeable= true, timeout?) {
+  info(message: string, title= 'Info', closeable= true, timeout?) {
     // add a message with info category
     const messageObject = new Message(message, title, 'info', closeable, timeout);
     this.addMessage(messageObject);

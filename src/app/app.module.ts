@@ -7,7 +7,6 @@ import { AppComponent } from './app.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { MainComponent } from './main/main.component';
 import { SearchBarComponent } from './navigation/search-bar/search-bar.component';
-import { MapComponent } from './main/map/map.component';
 import { ResultListComponent } from './main/result-list/result-list.component';
 import {ElasticsearchService} from './shared/elasticsearch/elasticsearch.service';
 import { ResultListItemComponent } from './main/result-list/result-list-item/result-list-item.component';
@@ -37,7 +36,6 @@ import {MaplayersService} from './shared/maplayers.service';
     NavigationComponent,
     MainComponent,
     SearchBarComponent,
-    MapComponent,
     ResultListComponent,
     ResultListItemComponent,
     PageNotFoundComponent,

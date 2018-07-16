@@ -40,8 +40,8 @@ export class Hit {
 
   getSupplementaryAsArray() {
     const arr: {key: string, value: any}[] = [];
-    for (let k in this.supplementary) {
-      arr.push({key: k, value:this.supplementary[k] });
+    for (const k of Object.keys(this.supplementary)) {
+      arr.push({key: k, value: this.supplementary[k] });
     }
     return arr;
   }

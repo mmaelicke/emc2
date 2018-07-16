@@ -15,7 +15,7 @@ install:
   - yarn install --production=false
 
 script:
-  - yarn build --base-href https://localhost:4200
+  - yarn build
 
 deploy:
   provider: pages

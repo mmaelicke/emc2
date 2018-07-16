@@ -16,6 +16,7 @@ import {Variables} from '../../shared/elasticsearch/elastic-response.model';
 export class PageEditComponent implements OnInit, OnDestroy {
   @Input() context: Context;
   pageForm: FormGroup;
+  supplementary: FormArray;
 
   // if started in edit mode, the page is set as property
   page: Page;
@@ -103,6 +104,8 @@ export class PageEditComponent implements OnInit, OnDestroy {
   }
 
   initEmptyForm() {
+    let s = new FormArray([]);
+    this.supplementary = s;
     this.pageForm = new FormGroup({
       id: new FormControl(),
       title: new FormControl(null, {validators: [ Validators.required ]}),
@@ -119,7 +122,7 @@ export class PageEditComponent implements OnInit, OnDestroy {
       location: new FormControl({value: '', disabled: true}),
       created: new FormControl(),
       edited: new FormControl(),
-      supplementary: new FormArray([]),
+      supplementary: s,
       file: new FormControl()
     });
   }
