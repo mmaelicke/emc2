@@ -185,7 +185,8 @@ export class ElasticTransportService {
 
     const multi_match = {
       'query': queryString,
-      'type': 'best_fields',
+      // 'type': 'best_fields',
+      'type': this.settings.matchType.getValue(),
       'tie_breaker': 0.3
     };
 
@@ -210,7 +211,10 @@ export class ElasticTransportService {
     }
 
     return this.http.post(
-      this.settings.elasticHost.getValue() + '/' + contextName + '/page/_search', { query: query }
+      this.settings.elasticHost.getValue() + '/' + contextName + '/page/_search', {
+        query: query,
+        size: this.settings.maxResults.getValue()
+      }
     );
   }
 
@@ -225,7 +229,8 @@ export class ElasticTransportService {
         'variables': {
           'terms': {
             'field': 'variable.raw',
-            'size': 100
+            // 'size': 100
+            'size': this.settings.maxVariableCount.getValue()
           }
         }
       }

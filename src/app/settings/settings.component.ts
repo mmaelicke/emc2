@@ -8,7 +8,12 @@ import {ElasticTransportService} from '../shared/elasticsearch/elastic-transport
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {
+  // general properties
+  useCookies: boolean;
+
+  // settings properties
   defaultListStyle: string;
+  maxResults: number;
   elasticHost: string;
   elasticHostValid = false;
   refreshStatus: number;
@@ -16,10 +21,15 @@ export class SettingsComponent implements OnInit {
   constructor(private settings: SettingsService, private transport: ElasticTransportService) { }
 
   ngOnInit() {
+    // Cookie settings
+    this.useCookies = this.settings.useCookie.getValue();
+    this.settings.useCookie.subscribe(state => {this.useCookies = state;});
+
     // load the current values from the settings service
     this.defaultListStyle = this.settings.defaultListStyle.getValue();
     this.elasticHost = this.settings.elasticHost.getValue();
     this.refreshStatus = this.settings.refreshStatus.getValue() / 1000;
+    this.maxResults = this.settings.maxResults.getValue();
 
     // check if the current host is valid
     this.transport.pingCluster().subscribe(
@@ -46,6 +56,15 @@ export class SettingsComponent implements OnInit {
 
   onRefreshStatusChanged() {
     this.settings.refreshStatus.next(this.refreshStatus * 1000);
+  }
+
+  onMaxResultsChanged() {
+    this.settings.maxResults.next(this.maxResults);
+  }
+
+  onAcceptCookies() {
+    // the user accepted the Cookies, setup Cookies for 60 days
+    this.settings.setupCookies(60);
   }
 
 }

@@ -29,6 +29,7 @@ import { PageEditComponent } from './importer/page-edit/page-edit.component';
 import {TagInputModule} from 'ngx-chips';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaplayersService} from './shared/maplayers.service';
+import {CookieService} from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import {MaplayersService} from './shared/maplayers.service';
     ElasticTransportService,
     MessageService,
     MaplayersService,
+    CookieService,
   ],
   bootstrap: [AppComponent]
 })
