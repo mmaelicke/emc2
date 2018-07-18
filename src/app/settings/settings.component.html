@@ -32,7 +32,21 @@
         <span class="input-group-text">Results</span>
       </div>
     </div>
-
+  </div>
+</div>
+<div class="form-group form-row">
+  <label for="refresh" class="col-sm-4 col-form-label">Refresh Connection Status</label>
+  <div class="col-sm-8">
+    <div class="input-group">
+      <input type="number" class="form-control" id="refresh"
+             [(ngModel)]="refreshStatus"
+             (change)="onRefreshStatusChanged()">
+      <div class="input-group-append">
+        <div class="input-group-text">
+          seconds
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -52,22 +66,28 @@
     </div>
   </div>
 </div>
-
 <div class="form-group form-row">
-  <label for="refresh" class="col-sm-4 col-form-label">Refresh Connection Status</label>
+  <label for="matchType" class="col-sm-4 col-form-label">Searching match Type</label>
+  <div class="col-sm-8">
+    <select id="matchType" class="form-control" [(ngModel)]="matchType" (change)="onMatchTypeChanged()">
+      <option value="best_fields">Match on single best field. [best_fields]</option>
+      <option value="most_fields">Match on all fields. [most_fields]</option>
+      <option value="cross_fields">Combine fields, then match. [cross_fields]</option>
+      <option value="phrase">Phrase Search. Combine fields. [phrase]</option>
+      <option value="phrase_prefix">Phrase Prefix Search. Combine fields. [phrase_prefix]</option>
+    </select>
+  </div>
+</div>
+<div class="form-group form-row">
+  <label for="maxVarCount" class="col-sm-4 col-form-label">aggregate Variable counts</label>
   <div class="col-sm-8">
     <div class="input-group">
-      <input type="number" class="form-control" id="refresh"
-             [(ngModel)]="refreshStatus"
-             (change)="onRefreshStatusChanged()">
-      <div class="input-group-append">
-        <div class="input-group-text">
-          seconds
-        </div>
-      </div>
+      <div class="input-group-prepend"><span class="input-group-text">&gt;</span></div>
+      <input type="number" id="maxVarCount" class="form-control" min="0" step="10"
+             [(ngModel)]="maxVariableCount" (input)="onMaxVariableCountChanged()">
+      <div class="input-group-append"><span class="input-group-text">counts</span></div>
     </div>
   </div>
 </div>
-
 <h4>Context Management</h4>
 <context-manager></context-manager>

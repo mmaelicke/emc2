@@ -17,19 +17,23 @@ export class SettingsComponent implements OnInit {
   elasticHost: string;
   elasticHostValid = false;
   refreshStatus: number;
+  matchType: string;
+  maxVariableCount: number;
 
   constructor(private settings: SettingsService, private transport: ElasticTransportService) { }
 
   ngOnInit() {
     // Cookie settings
     this.useCookies = this.settings.useCookie.getValue();
-    this.settings.useCookie.subscribe(state => {this.useCookies = state;});
+    this.settings.useCookie.subscribe(state => {this.useCookies = state; });
 
     // load the current values from the settings service
     this.defaultListStyle = this.settings.defaultListStyle.getValue();
     this.elasticHost = this.settings.elasticHost.getValue();
     this.refreshStatus = this.settings.refreshStatus.getValue() / 1000;
     this.maxResults = this.settings.maxResults.getValue();
+    this.matchType = this.settings.matchType.getValue();
+    this.maxVariableCount = this.settings.maxVariableCount.getValue();
 
     // check if the current host is valid
     this.transport.pingCluster().subscribe(
@@ -60,6 +64,14 @@ export class SettingsComponent implements OnInit {
 
   onMaxResultsChanged() {
     this.settings.maxResults.next(this.maxResults);
+  }
+
+  onMatchTypeChanged() {
+    this.settings.matchType.next(this.matchType);
+  }
+
+  onMaxVariableCountChanged() {
+    this.settings.maxVariableCount.next(this.maxVariableCount);
   }
 
   onAcceptCookies() {

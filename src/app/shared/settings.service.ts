@@ -94,9 +94,22 @@ export class SettingsService {
   initCookies() {
     // subscribe to all changes in the settings and store them to the cookies
     this.defaultListStyle.subscribe(
-      (style: string) => {
-        this.cookieStore.set('defaultListStyle', style);
-      }
+      (style: string) => { this.cookieStore.set('defaultListStyle', style); }
+    );
+    this.maxResults.subscribe(
+      (amount: number) => { this.cookieStore.set('maxResults', String(amount)); }
+    );
+    this.elasticHost.subscribe(
+      (host: string) => { this.cookieStore.set('elasticHost', host); }
+    );
+    this.refreshStatus.subscribe(
+      (status: number) => { this.cookieStore.set('refreshStatus', String(status)); }
+    );
+    this.matchType.subscribe(
+      (type: string) => { this.cookieStore.set('matchType', type); }
+    );
+    this.maxVariableCount.subscribe(
+      (count: number) => { this.cookieStore.set('maxVariableCount', String(count)); }
     );
   }
 }
