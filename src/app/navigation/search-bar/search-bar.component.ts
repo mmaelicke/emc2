@@ -3,6 +3,7 @@ import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.ser
 import {Context} from '../../models/context.model';
 import {Subscription} from 'rxjs/internal/Subscription';
 import {Variables} from '../../shared/elasticsearch/elastic-response.model';
+import {SettingsService} from '../../shared/settings.service';
 
 @Component({
   selector: 'search-bar',
@@ -16,6 +17,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   queryVariable = '-- all --';
   searchOnType = true;
   collapsed = false;
+  maxVariables: number;
+  maxVariablesSubscription: Subscription;
 
   // populate by all possible values
   contexts: Context[];
@@ -23,7 +26,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   variables: Variables[];
   variablesSubscription: Subscription;
 
-  constructor(private es: ElasticsearchService) { }
+  constructor(private es: ElasticsearchService, private settings: SettingsService) { }
 
   ngOnInit() {
     // get the current contexts and subscribe to changes
@@ -42,6 +45,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       (variables: Variables[]) => {
         this.variables = variables;
       }
+    );
+
+    // read the aggregation limit for variable counts
+    this.maxVariables = this.settings.maxVariableCount.getValue();
+    this.maxVariablesSubscription = this.settings.maxVariableCount.subscribe(
+      (count: number) => { this.maxVariables = count; }
     );
   }
 
@@ -74,6 +83,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.contextSubscription.unsubscribe();
     this.variablesSubscription.unsubscribe();
+    this.maxVariablesSubscription.unsubscribe();
   }
 
 }

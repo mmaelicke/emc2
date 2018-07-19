@@ -229,8 +229,8 @@ export class ElasticTransportService {
         'variables': {
           'terms': {
             'field': 'variable.raw',
-            // 'size': 100
-            'size': this.settings.maxVariableCount.getValue()
+            'size': 100
+            // 'size': this.settings.maxVariableCount.getValue()
           }
         }
       }

@@ -36,7 +36,7 @@
       <select class="form-control form-control-dark" (change)="onSearchConditionChanged()" [(ngModel)]="queryVariable">
         <option class="bg-dark text-light">-- all --</option>
         <option class="bg-dark text-light" *ngFor="let variable of variables" [value]="variable.name">
-          {{ variable.name }} <span class="badge badge-dark">{{ variable.count }}{{ variable.count == 100 ? '+': '' }}</span>
+          {{ variable.name }} <span class="badge badge-light">{{ variable.count >= maxVariables ? maxVariables + '+': variable.count }}</span>
         </option>
       </select>
     </div>
