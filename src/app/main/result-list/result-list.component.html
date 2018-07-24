@@ -1,19 +1,26 @@
-<h1 class="page-header mt-3">
-  Results
-  <div class="btn-group btn-group-lg pull-right" role="group">
-    <button type="button" class="btn btn-outline-primary" (click)="listStyle='table';"><fa name="table"></fa></button>
-    <button type="button" class="btn btn-outline-primary" (click)="listStyle='plain';"><fa name="terminal"></fa></button>
-    <button type="button" class="btn btn-outline-primary" (click)="listStyle='list-item';"><fa name="list"></fa></button>
-    <button type="button" class="btn btn-outline-primary" (click)="listStyle='default';"><fa name="server"></fa></button>
-  </div>
-</h1>
+<ng-container *ngIf="hits.length > 0; else noResultsFound">
+  <ng-container *ngTemplateOutlet="searchResults"></ng-container>
+</ng-container>
 
-<table class="table table-striped" *ngIf="listStyle==='table'; else rawList">
-  <tr><th>Title</th><th>Variable</th><th>license</th></tr>
-  <tr *ngFor="let hit of hits">
-    <td>{{ hit.title }}</td><td>{{ hit.variable }}</td><td>{{ hit.license }}</td>
-  </tr>
-</table>
+
+<ng-template #searchResults>
+  <h1 class="page-header mt-3">
+    Results
+    <div class="btn-group btn-group-lg pull-right" role="group">
+      <button type="button" class="btn btn-outline-primary" (click)="listStyle='table';"><fa name="table"></fa></button>
+      <button type="button" class="btn btn-outline-primary" (click)="listStyle='plain';"><fa name="terminal"></fa></button>
+      <button type="button" class="btn btn-outline-primary" (click)="listStyle='list-item';"><fa name="list"></fa></button>
+      <button type="button" class="btn btn-outline-primary" (click)="listStyle='default';"><fa name="server"></fa></button>
+    </div>
+  </h1>
+
+  <table class="table table-striped" *ngIf="listStyle==='table'; else rawList">
+    <tr><th>Title</th><th>Variable</th><th>license</th></tr>
+    <tr *ngFor="let hit of hits">
+      <td>{{ hit.title }}</td><td>{{ hit.variable }}</td><td>{{ hit.license }}</td>
+    </tr>
+  </table>
+</ng-template>
 
 <ng-template #rawList>
   <app-result-list-item
@@ -21,4 +28,17 @@
     [hitItem]="hit"
     [itemStyle]="listStyle"
   ></app-result-list-item>
+</ng-template>
+
+<ng-template #noResultsFound>
+  <div class="row h-100 bg-light">
+    <div class="col"></div>
+    <div class="col col-md-8 col-sm-12  my-auto">
+      <div class="alert alert-light text-center">
+        <h2 class="alert-heading">No Results found.</h2>
+        Your search did not return any results.
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
 </ng-template>

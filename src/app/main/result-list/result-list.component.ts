@@ -10,7 +10,7 @@ import {Subscription} from 'rxjs/internal/Subscription';
   styleUrls: ['./result-list.component.css']
 })
 export class ResultListComponent implements OnInit, OnDestroy {
-  hits: Hit[];
+  hits: Hit[] = [];
   hitsSubscription: Subscription;
   listStyle: string;
   listStyleSubscription: Subscription;

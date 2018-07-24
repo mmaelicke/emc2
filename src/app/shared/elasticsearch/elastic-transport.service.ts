@@ -199,7 +199,7 @@ export class ElasticTransportService {
           },
           'filter': {
             'term': {
-              'variable': variableName
+              'variable.raw': variableName
             }
           }
         }

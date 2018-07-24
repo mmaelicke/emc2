@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 /* Some custom styling */
+html, body {
+  height: 100%;
+}
+
 bg-theme {
   background-color: #BB5B3D;
 }
