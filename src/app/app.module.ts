@@ -30,6 +30,7 @@ import {TagInputModule} from 'ngx-chips';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaplayersService} from './shared/maplayers.service';
 import {CookieService} from 'ngx-cookie-service';
+import { StartPageComponent } from './generic/start-page/start-page.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import {CookieService} from 'ngx-cookie-service';
     ContextManagerComponent,
     EditContextComponent,
     PageEditComponent,
+    StartPageComponent,
   ],
   imports: [
     BrowserModule,

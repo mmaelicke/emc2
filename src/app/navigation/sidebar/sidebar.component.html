@@ -6,10 +6,10 @@
     <div class="sidebar-center h-100 w-100">
       <ul class="nav flex-column my-auto mx-auto">
         <li class="nav-item"><a class="nav-link"
-                                [routerLink]="['']"
+                                [routerLink]="['r']"
                                 routerLinkActive="active"
-                                [routerLinkActiveOptions]="{exact: true}">
-          <fa name="home"></fa> Home
+                                [routerLinkActiveOptions]="{exact: false}">
+          <fa name="search"></fa> Search
         </a></li>
         <li class="nav-item"><a class="nav-link" [routerLink]="['settings']" routerLinkActive="active">
           <fa name="cog"></fa> Settings
@@ -22,7 +22,7 @@
 
     <div class="row m-1 status-row">
       <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-        <elastic-status></elastic-status>
+        <app-elastic-status></app-elastic-status>
       </div>
     </div>
   </div>

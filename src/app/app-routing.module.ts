@@ -5,6 +5,8 @@ import {PageNotFoundComponent} from './generic/page-not-found/page-not-found.com
 import {SettingsComponent} from './settings/settings.component';
 import {ImporterComponent} from './importer/importer.component';
 import {EditContextComponent} from './settings/context-manager/edit-context/edit-context.component';
+import {ResultListComponent} from './main/result-list/result-list.component';
+import {StartPageComponent} from './generic/start-page/start-page.component';
 
 const appRoutes = [
   {path: 'import', component: ImporterComponent},
@@ -12,7 +14,10 @@ const appRoutes = [
       {path: 'context/new', component: EditContextComponent},
       {path: 'context/:id', component: EditContextComponent}
     ]},
-  {path: '', component: MainComponent, pathMatch: 'full'},
+  {path: '', component: MainComponent, children: [
+      {path: '', component: StartPageComponent, pathMatch: 'full'},
+      {path: 'r', component: ResultListComponent},
+    ]},
   {path: '**', component: PageNotFoundComponent}
 ];
 

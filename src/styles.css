@@ -8,6 +8,10 @@ bg-theme {
   background-color: #BB5B3D;
 }
 
+text-theme {
+  color: #BB5B3D !important;
+}
+
 h1, h2, h3, h4 {
   color: #BB5B3D;
   font-weight: bold;

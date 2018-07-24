@@ -4,6 +4,7 @@ import {Context} from '../../models/context.model';
 import {Subscription} from 'rxjs/internal/Subscription';
 import {Variables} from '../../shared/elasticsearch/elastic-response.model';
 import {SettingsService} from '../../shared/settings.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'search-bar',
@@ -26,7 +27,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   variables: Variables[];
   variablesSubscription: Subscription;
 
-  constructor(private es: ElasticsearchService, private settings: SettingsService) { }
+  constructor(private es: ElasticsearchService, private settings: SettingsService, private router: Router) { }
 
   ngOnInit() {
     // get the current contexts and subscribe to changes
@@ -70,6 +71,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     } else {
       this.es.search(this.queryString, this.queryContext);
     }
+    // navigate to the Result list component
+    this.router.navigate(['/r']);
   }
 
   // The input event on the Search bar has its own method to threshold and deactive
