@@ -7,6 +7,10 @@ import {ImporterComponent} from './importer/importer.component';
 import {EditContextComponent} from './settings/context-manager/edit-context/edit-context.component';
 import {ResultListComponent} from './main/result-list/result-list.component';
 import {StartPageComponent} from './generic/start-page/start-page.component';
+import {HitPageComponent} from './main/hit-page/hit-page.component';
+import {GeneralInfoComponent} from './main/hit-page/general-info/general-info.component';
+import {SupplementaryInfoComponent} from './main/hit-page/supplementary-info/supplementary-info.component';
+import {DataViewComponent} from './main/hit-page/data-view/data-view.component';
 
 const appRoutes = [
   {path: 'import', component: ImporterComponent},
@@ -17,6 +21,11 @@ const appRoutes = [
   {path: '', component: MainComponent, children: [
       {path: '', component: StartPageComponent, pathMatch: 'full'},
       {path: 'r', component: ResultListComponent},
+      {path: 'r/:id', component: HitPageComponent, children: [
+          {path: '', component: GeneralInfoComponent, pathMatch: 'full'},
+          {path: 'supplementary', component: SupplementaryInfoComponent},
+          {path: 'data', component: DataViewComponent},
+        ]},
     ]},
   {path: '**', component: PageNotFoundComponent}
 ];

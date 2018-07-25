@@ -16,17 +16,18 @@
 
   <table class="table table-striped" *ngIf="listStyle==='table'; else rawList">
     <tr><th>Title</th><th>Variable</th><th>license</th></tr>
-    <tr *ngFor="let hit of hits">
-      <td>{{ hit.title }}</td><td>{{ hit.variable }}</td><td>{{ hit.license }}</td>
+    <tr *ngFor="let hit of hits; let i = index">
+      <td><a [routerLink]="[i]">{{ hit.title }}</a></td><td>{{ hit.variable }}</td><td>{{ hit.license }}</td>
     </tr>
   </table>
 </ng-template>
 
 <ng-template #rawList>
   <app-result-list-item
-    *ngFor="let hit of hits;"
+    *ngFor="let hit of hits; let i = index"
     [hitItem]="hit"
     [itemStyle]="listStyle"
+    [listId]="i"
   ></app-result-list-item>
 </ng-template>
 

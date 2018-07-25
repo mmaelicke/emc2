@@ -52,6 +52,10 @@ export class ElasticsearchService {
     );
   }
 
+  getHitatIndex(index: number) {
+    return this._hits.slice()[index];
+  }
+
   getContexts() {
     return this._contexts.slice();
   }

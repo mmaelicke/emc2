@@ -31,6 +31,10 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaplayersService} from './shared/maplayers.service';
 import {CookieService} from 'ngx-cookie-service';
 import { StartPageComponent } from './generic/start-page/start-page.component';
+import { HitPageComponent } from './main/hit-page/hit-page.component';
+import { GeneralInfoComponent } from './main/hit-page/general-info/general-info.component';
+import { SupplementaryInfoComponent } from './main/hit-page/supplementary-info/supplementary-info.component';
+import { DataViewComponent } from './main/hit-page/data-view/data-view.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +54,10 @@ import { StartPageComponent } from './generic/start-page/start-page.component';
     EditContextComponent,
     PageEditComponent,
     StartPageComponent,
+    HitPageComponent,
+    GeneralInfoComponent,
+    SupplementaryInfoComponent,
+    DataViewComponent,
   ],
   imports: [
     BrowserModule,

@@ -11,6 +11,9 @@ export class ResultListItemComponent implements OnInit {
   @Input() hitItem: Hit;
   @Input() itemStyle = 'plain';
 
+  // the index on ElasticsearchService Hits
+  @Input() listId: number;
+
   // visibility toggler
   @Output() isVisible = false;
 
