@@ -1,0 +1,20 @@
+<div class="alert alert-danger m-5" *ngIf="!hit">
+  <h1 class="alert-heading">[Developer] No Hit Item bound to Component</h1>
+</div>
+
+<div class="mx-3 mt-3 w-100" *ngIf="hit">
+  <table class="table table-striped" *ngIf="hit.getSupplementaryAsArray().length >= 0; else noSupplementary">
+    <tr><th>Key</th><th>Value</th></tr>
+
+    <tr *ngFor="let item of hit.getSupplementaryAsArray()">
+      <td>{{ item.key }}</td><td class="text-center">{{ item.value }}</td>
+    </tr>
+  </table>
+</div>
+
+<ng-template #noSupplementary>
+  <div class="alert alert-info m-5">
+    <h4 class="alert-heading">No Info Found</h4>
+    <p>This data set seems to have no additional supplementary information defined.</p>
+  </div>
+</ng-template>

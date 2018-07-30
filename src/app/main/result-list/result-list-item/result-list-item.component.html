@@ -8,7 +8,8 @@
       >
         <fa name="caret-{{ isVisible ? 'down': 'right' }}"></fa> ID: {{ hitItem._meta.id }}
       </div>
-      <div class="badge">{{ hitItem.title }}</div><br>
+      <!--<div class="badge">{{ hitItem.title }}</div><br>-->
+      <a [routerLink]="['/r', listId]">{{ hitItem.title }}</a><br>
     </div>
     <div [class]="isVisible ? 'collapse show' : 'collapse'">
       <pre class="card bg-light p-3">{{ hitItem | json }}</pre>
@@ -18,20 +19,26 @@
   <!-- LIST ITEM -->
   <div *ngSwitchCase="'list-item'" class="list-group-item">
     <h4 class="alert-heading">
-      {{ hitItem.title }}
-      <div class="badge badge-primary pull-right">ID: {{ hitItem._meta.id }}</div>
+      <a [routerLink]="['/r', listId]">
+        {{ hitItem.title }}
+        <div class="badge badge-primary pull-right">ID: {{ hitItem._meta.id }}</div>
+      </a>
     </h4>
     <p>{{ hitItem.description }}</p>
   </div>
 
   <div *ngSwitchCase="'only_title'">
-    <h4>{{ hitItem.title }}</h4>
+    <a [routerLink]="['/r', listId]">
+      <h4>{{ hitItem.title }}</h4>
+    </a>
   </div>
 
   <!-- DEFAULT STYLE -->
   <div class="alert alert-info" *ngSwitchDefault>
     <h4 class="alert-heading">
-      {{ hitItem.title }}
+      <a [routerLink]="['/r', listId]">
+        {{ hitItem.title }}
+      </a>
       <button type="button"
               class="btn btn-sm btn-outline-primary pull-right"
               (click)="isVisible=!isVisible"

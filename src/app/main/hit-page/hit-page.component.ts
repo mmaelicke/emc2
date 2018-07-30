@@ -13,6 +13,7 @@ export class HitPageComponent implements OnInit {
   hit: Hit;
   currentItem: number;
   totalItems: number;
+  activeTab = 'general';
 
   constructor(private activeRoute: ActivatedRoute, private message: MessageService, private es: ElasticsearchService) { }
 
@@ -27,6 +28,10 @@ export class HitPageComponent implements OnInit {
         this.hit = this.es.getHitatIndex(this.currentItem);
       }
     );
+  }
+
+  onActivateTab(tabName: string) {
+    this.activeTab = tabName;
   }
 
 }

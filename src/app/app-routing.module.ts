@@ -21,11 +21,7 @@ const appRoutes = [
   {path: '', component: MainComponent, children: [
       {path: '', component: StartPageComponent, pathMatch: 'full'},
       {path: 'r', component: ResultListComponent},
-      {path: 'r/:id', component: HitPageComponent, children: [
-          {path: '', component: GeneralInfoComponent, pathMatch: 'full'},
-          {path: 'supplementary', component: SupplementaryInfoComponent},
-          {path: 'data', component: DataViewComponent},
-        ]},
+      {path: 'r/:id', component: HitPageComponent},
     ]},
   {path: '**', component: PageNotFoundComponent}
 ];

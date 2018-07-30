@@ -23,19 +23,37 @@
     <div class="col col-sm-12">
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/r', currentItem]" routerLinkActive="active">General</a>
+          <a [ngClass]="activeTab==='general' ? ['nav-link','active'] : ['nav-link']"
+             (click)="onActivateTab('general')">General</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/r', currentItem, 'supplementary']" routerLinkActive="active">Supplementary</a>
+          <a [ngClass]="activeTab==='supplementary' ? 'nav-link active' : 'nav-link'"
+             (click)="onActivateTab('supplementary')">Supplementary</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/r', currentItem, 'data']" routerLinkActive="active">Data</a>
+          <a  [ngClass]="activeTab==='data' ? 'nav-link active' : 'nav-link'"
+              (click)="onActivateTab('data')">Data</a>
         </li>
       </ul>
     </div>
   </div>
-  <div class="row card">
-    <router-outlet></router-outlet>
+  <div class="row">
+    <div class="col-12 col">
+      <!-- bind the three components here. No Routing, cause I want to use Property binding -->
+      <app-general-info
+        *ngIf="activeTab==='general'"
+        [hit]="hit"></app-general-info>
+
+      <app-supplementary-info
+        *ngIf="activeTab==='supplementary'"
+        [hit]="hit"></app-supplementary-info>
+
+      <app-data-view
+        *ngIf="activeTab==='data'"
+        [hit]="hit"></app-data-view>
+
+
+    </div>
   </div>
 
 </ng-container>

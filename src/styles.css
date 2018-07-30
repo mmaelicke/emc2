@@ -17,3 +17,13 @@ h1, h2, h3, h4 {
   font-weight: bold;
 }
 
+a {
+  text-decoration: none;
+  color: #7b3c28;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #9d4d33;
+}
+
