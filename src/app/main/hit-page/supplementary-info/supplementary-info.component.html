@@ -3,7 +3,7 @@
 </div>
 
 <div class="mx-3 mt-3 w-100" *ngIf="hit">
-  <table class="table table-striped" *ngIf="hit.getSupplementaryAsArray().length >= 0; else noSupplementary">
+  <table class="table table-striped" *ngIf="hit.getSupplementaryAsArray().length > 0; else noSupplementary">
     <tr><th>Key</th><th>Value</th></tr>
 
     <tr *ngFor="let item of hit.getSupplementaryAsArray()">

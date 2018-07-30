@@ -19,7 +19,10 @@
         <tr class="text-black-50"><td>Owner</td><td>License</td></tr>
         <tr><th>{{ hit.owner }}</th><th>{{ hit.license }}</th></tr>
         <tr class="text-black-50"><td>Created</td><td>Last Edited</td></tr>
-        <tr><th>{{ hit.created }}</th><th>{{ hit.edited }}</th></tr>
+        <tr>
+          <th>{{ hit.created | date:'E, d. MMMM yyyy, HH:mm' }}</th>
+          <th>{{ hit.edited  | date:'E, d. MMMM yyyy, HH:mm' }}</th>
+        </tr>
       </table>
     </div>
 
