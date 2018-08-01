@@ -7,9 +7,9 @@ import { AppComponent } from './app.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { MainComponent } from './main/main.component';
 import { SearchBarComponent } from './navigation/search-bar/search-bar.component';
-import { ResultListComponent } from './main/result-list/result-list.component';
+import { ResultListComponent } from './main/result/result-list/result-list.component';
 import {ElasticsearchService} from './shared/elasticsearch/elasticsearch.service';
-import { ResultListItemComponent } from './main/result-list/result-list-item/result-list-item.component';
+import { ResultListItemComponent } from './main/result/result-list/result-list-item/result-list-item.component';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import { PageNotFoundComponent } from './generic/page-not-found/page-not-found.component';
@@ -35,6 +35,8 @@ import { HitPageComponent } from './main/hit-page/hit-page.component';
 import { GeneralInfoComponent } from './main/hit-page/general-info/general-info.component';
 import { SupplementaryInfoComponent } from './main/hit-page/supplementary-info/supplementary-info.component';
 import { DataViewComponent } from './main/hit-page/data-view/data-view.component';
+import { MapComponent } from './main/result/map/map.component';
+import { ResultComponent } from './main/result/result.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +60,8 @@ import { DataViewComponent } from './main/hit-page/data-view/data-view.component
     GeneralInfoComponent,
     SupplementaryInfoComponent,
     DataViewComponent,
+    MapComponent,
+    ResultComponent,
   ],
   imports: [
     BrowserModule,

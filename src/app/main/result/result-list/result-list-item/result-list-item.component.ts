@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, Output} from '@angular/core';
-import { Hit } from '../../../shared/elasticsearch/hit.model';
+import { Hit } from '../../../../shared/elasticsearch/hit.model';
 
 @Component({
   selector: 'app-result-list-item',

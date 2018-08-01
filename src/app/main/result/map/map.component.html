@@ -1,0 +1,10 @@
+<div class="map h-100 w-100 p-0 m-0" id="mainMap"
+     leaflet
+     [leafletZoom]="10"
+     [leafletCenter]="[48.0, 7.8]"
+     [leafletLayers]="mapLayers"
+     [leafletLayersControl]="layerControl"
+     [leafletLayersControlOptions]="layerControlOptions"
+     (leafletMapReady)="onMapReady($event)"
+>
+</div>

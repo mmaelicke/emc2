@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
-import {Hit} from '../../shared/elasticsearch/hit.model';
-import {SettingsService} from '../../shared/settings.service';
+import {ElasticsearchService} from '../../../shared/elasticsearch/elasticsearch.service';
+import {Hit} from '../../../shared/elasticsearch/hit.model';
+import {SettingsService} from '../../../shared/settings.service';
 import {Subscription} from 'rxjs/internal/Subscription';
 
 @Component({
