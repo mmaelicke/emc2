@@ -1,5 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Hit} from '../../../shared/elasticsearch/hit.model';
+import {MaplayersService} from '../../../shared/maplayers.service';
+import {Icon, LatLng, latLng, marker} from 'leaflet';
 
 @Component({
   selector: 'app-general-info',
@@ -9,9 +11,23 @@ import {Hit} from '../../../shared/elasticsearch/hit.model';
 export class GeneralInfoComponent implements OnInit {
   @Input() hit: Hit;
 
-  constructor() { }
+  // map stuff
+  coordinate: LatLng;
+  mapLayers: any[] = [];
+
+  constructor(private layerService: MaplayersService) { }
 
   ngOnInit() {
-  }
+    if (this.hit.coordinates) {
+      const icon = new Icon({iconUrl: '../assets/img/marker.png', iconSize: [64, 64], iconAnchor: [32, 64]});
+      this.coordinate = latLng([this.hit.coordinates.lat, this.hit.coordinates.lon]);
+      this.mapLayers = [
+        this.layerService.layer.terrain,
+        marker(this.coordinate, {icon: icon})
+      ];
+    } else {
+      console.log('The hit does not have coordinates associated.');
+    }
+      }
 
 }

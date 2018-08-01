@@ -28,7 +28,12 @@
 
     <!-- [map] -->
     <div class="col-6" *ngIf="hit.coordinates">
-
+      <div class="map" id="coordinateMap" style="height: 300px"
+           leaflet
+           [leafletCenter]="coordinate"
+           [leafletLayers]="mapLayers"
+           [leafletZoom]="14">
+      </div>
     </div>
   </div>
 
