@@ -1,5 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ElasticTransportService} from '../elastic-transport.service';
+import {ElasticsearchService} from '../elasticsearch.service';
+import {Subscription} from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-elastic-status',
@@ -8,11 +10,12 @@ import {ElasticTransportService} from '../elastic-transport.service';
 })
 export class ElasticStatusComponent implements OnInit, OnDestroy {
   isOnline = false;
+  statusSubscription: Subscription;
 
-  constructor(private transport: ElasticTransportService) { }
+  constructor(private es: ElasticsearchService) { }
 
   ngOnInit() {
-    this.transport.isActive.subscribe(
+    this.statusSubscription = this.es.active.subscribe(
       value => {
         this.isOnline = value;
       }
@@ -20,7 +23,7 @@ export class ElasticStatusComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.transport.isActive.unsubscribe();
+    this.statusSubscription.unsubscribe();
   }
 
 }

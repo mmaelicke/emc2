@@ -7,10 +7,15 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {Page} from '../../models/page.model';
 import {IndexResponse, SearchResponse} from './elastic-response.model';
 import {Variables} from './elastic-response.model';
+import {SettingsService} from '../settings.service';
+import { Client } from 'elasticsearch-browser';
+import * as elasticsearch from 'elasticsearch-browser';
 
 @Injectable()
 export class ElasticsearchService {
-  isActive = false;
+  private client: Client;
+  private _isActive = false;
+  active: BehaviorSubject<boolean>;
   private lastStatus = 'inactive';
 
   // current Hits
@@ -21,35 +26,62 @@ export class ElasticsearchService {
   variables = new BehaviorSubject<Variables[]>(this._variables);
   hits = new BehaviorSubject<Hit[]>(this._hits);
 
-  // pages
-  // private _pages: Page[] = [];
-  // pages = new BehaviorSubject<Page[]>(this._pages);
-
   // parameters of the last search
   lastQueryTime: number;
   lastTimedOut: boolean;
   currentHitMeta: {total: number, max_score: number};
 
-  constructor(private transport: ElasticTransportService, private messages: MessageService) {
-    // list to the status of the transport service
-    this.transport.isActive.subscribe(
-      (value: boolean) => {
-        // save the last status
-        this.lastStatus = this.isActive ? 'active' : 'inactive';
-        this.isActive = value;
+  constructor(private transport: ElasticTransportService, private messages: MessageService, private settings: SettingsService) {
+    // init the active Subject
+    this.active = new BehaviorSubject<boolean>(this._isActive);
 
-        // check if it just got active
-        if (this.lastStatus === 'inactive' && this.isActive) {
-          // the service just got active, reload all contexts
-          this.loadContexts();
-
-          // reload all variables
-          this.loadVariables();
-
-          this.messages.success('Elastic Cluster online.');
-        }
+    // build the Elasticsearch Client
+    this.client = new elasticsearch.Client({
+      host: this.settings.elasticHost.getValue(),
+      apiVersion: '6.2',
+      log: 'trace'
+    });
+    // subscribe to the Settings
+    this.settings.elasticHost.subscribe(
+      (newHost: string) => {
+        this.client = new Client({
+          host: newHost,
+          apiVersion: '6.2',
+          log: 'trace'
+        });
       }
     );
+    // activate the check Cluster loop
+    this.pingCluster();
+  }
+
+  private pingCluster() {
+    this.client.ping({}).then(
+    () => {
+      // store last status
+      this.lastStatus = this.active.getValue() ? 'active' : 'inactive';
+        // update the status
+      this.active.next(true);
+
+      // reload context and variables
+      if (this.lastStatus === 'inactive' && this.active.getValue()) {
+        // was inactive, got active now
+        this.loadContexts();
+        this.loadVariables();
+      }
+      this.messages.success('Elastic Cluster online.')
+      },
+      () => {
+        console.log('pingCluster then->onrejected');
+        this.active.next(false);
+      }
+    ).catch(
+      () => {
+        console.log('pingCluster catch->onrejected');
+        this.active.next(false);
+      }
+    );
+    setTimeout(this.pingCluster.bind(this), this.settings.refreshStatus.getValue());
   }
 
   getHitatIndex(index: number) {
