@@ -11,6 +11,7 @@ import {SettingsService} from '../settings.service';
 import { Client } from 'elasticsearch-browser';
 import * as elasticsearch from 'elasticsearch-browser';
 import {SearchResponse} from 'elasticsearch';
+import index from '@angular/cli/lib/cli';
 
 @Injectable()
 export class ElasticsearchService {
@@ -40,7 +41,7 @@ export class ElasticsearchService {
     this.client = new elasticsearch.Client({
       host: this.settings.elasticHost.getValue(),
       apiVersion: '6.2',
-      log: 'trace'
+      log: 'error'
     });
     // subscribe to the Settings
     this.settings.elasticHost.subscribe(
@@ -48,7 +49,7 @@ export class ElasticsearchService {
         this.client = new Client({
           host: newHost,
           apiVersion: '6.2',
-          log: 'trace'
+          log: 'error'
         });
       }
     );
@@ -58,19 +59,19 @@ export class ElasticsearchService {
 
   private pingCluster() {
     this.client.ping({}).then(
-    () => {
-      // store last status
-      this.lastStatus = this.active.getValue() ? 'active' : 'inactive';
+      () => {
+        // store last status
+        this.lastStatus = this.active.getValue() ? 'active' : 'inactive';
         // update the status
-      this.active.next(true);
+        this.active.next(true);
 
-      // reload context and variables
-      if (this.lastStatus === 'inactive' && this.active.getValue()) {
-        // was inactive, got active now
-        this.loadContexts();
-        this.loadVariables();
-      }
-      this.messages.success('Elastic Cluster online.');
+        // reload context and variables
+        if (this.lastStatus === 'inactive' && this.active.getValue()) {
+          // was inactive, got active now
+          this.loadContexts();
+          this.loadVariables();
+          this.messages.success('Elastic Cluster online.');
+        }
       },
       () => {
         console.log('pingCluster then->onrejected');
@@ -85,7 +86,7 @@ export class ElasticsearchService {
     setTimeout(this.pingCluster.bind(this), this.settings.refreshStatus.getValue());
   }
 
-  getHitatIndex(index: number) {
+  getHitAtIndex(index: number) {
     return this._hits.slice()[index];
   }
 
@@ -141,11 +142,36 @@ export class ElasticsearchService {
   }
 
   createGlobalContext() {
-    this.transport.putGlobalContext().subscribe(
-      value => {this.messages.success('Successfully added global Context'); },
-      error => {this.messages.error('Something went wrong: \n' + error.toString() ); }
+    this.client.index({
+      index: 'mgn', type: 'context',
+      body: {
+        name: 'global'
+      }
+    }).then(
+      () => { this.messages.success('Successfully added global Context'); },
+      (error) => { this.messages.error('Something went wrong: \n' + error.toString() ); }
     );
+//    this.transport.putGlobalContext().subscribe(
+//      value => {this.messages.success('Successfully added global Context'); },
+//      error => {this.messages.error('Something went wrong: \n' + error.toString() ); }
+//    );
+  }
 
+  private createAliases(context: Context) {
+    // get the alias names
+    const aliases = context.part_of.slice();
+
+    // create every name as alias
+    for (const alias of aliases) {
+      this.client.indices.putAlias({
+        index: context.index, name: alias
+      }).then(
+        () => {},
+        (error) => {
+          this.messages.error('Could not create Alias' + alias + '.<br>' + error);
+        }
+      );
+    }
   }
 
   createNewContext(context: Context, mappingString: string) {
@@ -156,65 +182,95 @@ export class ElasticsearchService {
     // parse the mapping back
     const mapping = JSON.parse(mappingString);
     // create the new context
-    this.transport.postContext(context, true).subscribe(
-      (value) => {
-        // context created, create index
-        this.transport.putIndex(context.index, mapping.settings, mapping.mappings).subscribe(
-          (value) => {
-            // set alias to the index name
-            const aliases = context.part_of.slice();
-            aliases.push(context.name);
-            // alias the new index
-            for (const alias of aliases) {
-              this.transport.putAlias(context.index, alias).subscribe(
-                value => {},
-                error => {this.messages.warning('Could not make context ' + context.name + ' part of ' + alias); }
-              );
-            }
+    this.client.index({
+      index: 'mgn', type: 'context',
+      body: {
+        name: context.name, part_of: context.part_of, index: context.index
+      }
+    }).then(
+      () => {
+        // create a new index
+        this.client.indices.create({
+          index: context.index, body: {settings: mapping.settings, mappings: mapping.mappings}
+        }).then(
+          () => {
+            // put the new aliases
+            this.createAliases(context);
+            // Success message and reload contexts after 1 second
             this.messages.success('created context ' + context.name, 'Created Context');
+            setTimeout(this.loadContexts.bind(this), 1100);
 
-            // reload the contexts
-            setTimeout(this.loadContexts.bind(this), 1000);
           },
           (error) => {
-            this.transport.deleteContext(context.id).subscribe();
-            this.messages.error('index ' + context.index  + ' failed.\n' + error.message );
-            setTimeout(this.loadContexts.bind(this), 1000);
+            this.messages.error('Could not create Index: ' + error);
+            // TODO: here, the context is created, but the index not, therefore remove the context again
           }
         );
       },
-      (error) => { this.messages.error('context ' + context.name + ' failed.\n' + error ); }
+      (error) => {
+        this.messages.error('Could not create new Context.<br>' + error);
+      }
     );
   }
 
-  editContext(context: Context) {
-    this.transport.putContext(context).subscribe(
-      value => {
-        // refresh the contexts and message
-        setTimeout(this.loadContexts.bind(this), 1000);
+  async editContext(context: Context) {
+    // check if global exists
+    if(!context.part_of.find(n => n === 'global')) {
+      context.part_of.push('global');
+    }
+
+    // assure that the global context is in part_of
+    const contextEntry = await this.client.get({
+      index: 'mgn', type: 'context', id: context.id
+    });
+    // TODO a little bit of error handling here
+    // TODO: maybe rework the await part into a chain of then
+    const originalContext: Context = contextEntry._source;
+
+    // update the entry
+    this.client.update({
+      index: 'mgn', type: 'context', id: context.id, body: {
+        doc: { name: context.name, part_of: context.part_of, index: context.index }
+      }
+    }).then(
+      () => {
+        // delete the old Aliases
+        for (const alias of originalContext.part_of.slice()) {
+          this.client.indices.deleteAlias({
+            index: context.index, name: alias
+          });
+        }
+        // create the missing aliases
+        setTimeout(this.createAliases(context), 500);
+
+        // recreate the Context list
+        setTimeout(this.loadContexts.bind(this), 1100);
         this.messages.success('Edited Context ' + context.name);
-      },
-      error => { this.messages.error('Context ' + context.name + ' failed.\n' + error ); }
+        },
+      (error) => {this.messages.error('Context ' + context.name + ' failed.\n' + error ); }
     );
   }
 
   deleteContext(context: Context, deleteIndex= true) {
     if (deleteIndex) {
-      // delete the index
-      this.transport.deleteIndex(context.index).subscribe(
-        value => { this.messages.success('Index ' + context.index + ' deleted.');  },
-        error => {
-          this.messages.error('The index ' + context.index + ' could not be deleted.<br>' + error.message);
-        }
+      this.client.indices.delete({
+        index: context.index
+      }).then(
+        () => { this.messages.success('Index ' + context.index + ' deleted.'); },
+        (error) => { this.messages.error('The index ' + context.index + ' could not be deleted.<br>' + error.message); }
       );
     }
-    this.transport.deleteContext(context.id).subscribe(
-      value => {
-        // refresh the contexts and message
+
+    // Delete the context Entry
+    this.client.delete({
+      index: 'mgn', type: 'context', id: context.id
+    }).then(
+      () => {
+        // reload the Context list after one second
         setTimeout(this.loadContexts.bind(this), 1000);
         this.messages.success('Context ' + context.name + ' (ID: ' + context.id + ') deleted', 'Deleted');
       },
-      error => { this.messages.error('Something went wrong. Error: \n ' + error.message ); }
+      (error) => { this.messages.error('Something went wrong. Error: \n ' + error.message ); }
     );
   }
 

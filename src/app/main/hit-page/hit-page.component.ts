@@ -19,13 +19,13 @@ export class HitPageComponent implements OnInit {
 
   ngOnInit() {
     this.currentItem = Number(this.activeRoute.snapshot.paramMap.get('id'));
-    this.hit = this.es.getHitatIndex(this.currentItem);
+    this.hit = this.es.getHitAtIndex(this.currentItem);
     this.totalItems = this.es.hits.getValue().length;
 
     this.activeRoute.params.subscribe(
       (params: Params) => {
         this.currentItem = Number(params['id']);
-        this.hit = this.es.getHitatIndex(this.currentItem);
+        this.hit = this.es.getHitAtIndex(this.currentItem);
       }
     );
   }
