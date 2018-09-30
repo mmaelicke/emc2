@@ -19,7 +19,6 @@ import {SettingsService} from './shared/settings.service';
 import { SettingsComponent } from './settings/settings.component';
 import { ImporterComponent } from './importer/importer.component';
 import { ElasticStatusComponent } from './shared/elasticsearch/elastic-status/elastic-status.component';
-import {ElasticTransportService} from './shared/elasticsearch/elastic-transport.service';
 import {HttpClientModule} from '@angular/common/http';
 import { MessageComponent } from './generic/message/message.component';
 import { ContextManagerComponent } from './settings/context-manager/context-manager.component';
@@ -77,7 +76,6 @@ import { ResultComponent } from './main/result/result.component';
   providers: [
     ElasticsearchService,
     SettingsService,
-    ElasticTransportService,
     MessageService,
     MaplayersService,
     CookieService,

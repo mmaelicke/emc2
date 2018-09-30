@@ -1,17 +1,14 @@
 import {Injectable} from '@angular/core';
 import {Hit} from './hit.model';
-import {ElasticTransportService} from './elastic-transport.service';
 import {Context} from '../../models/context.model';
 import {MessageService} from '../message.service';
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {Page} from '../../models/page.model';
-import {IndexResponse} from './elastic-response.model';
-import {Variables} from './elastic-response.model';
+import {Variables} from './data.model';
 import {SettingsService} from '../settings.service';
 import { Client } from 'elasticsearch-browser';
 import * as elasticsearch from 'elasticsearch-browser';
-import {SearchResponse} from 'elasticsearch';
-import index from '@angular/cli/lib/cli';
+import {CreateDocumentResponse, PingParams, SearchResponse} from 'elasticsearch';
 
 @Injectable()
 export class ElasticsearchService {
@@ -33,7 +30,7 @@ export class ElasticsearchService {
   lastTimedOut: boolean;
   currentHitMeta: {total: number, max_score: number};
 
-  constructor(private transport: ElasticTransportService, private messages: MessageService, private settings: SettingsService) {
+  constructor(private messages: MessageService, private settings: SettingsService) {
     // init the active Subject
     this.active = new BehaviorSubject<boolean>(this._isActive);
 
@@ -55,6 +52,10 @@ export class ElasticsearchService {
     );
     // activate the check Cluster loop
     this.pingCluster();
+  }
+
+  ping(params: PingParams) {
+    return this.client.ping(params);
   }
 
   private pingCluster() {
@@ -215,7 +216,7 @@ export class ElasticsearchService {
 
   async editContext(context: Context) {
     // check if global exists
-    if(!context.part_of.find(n => n === 'global')) {
+    if (!context.part_of.find(n => n === 'global')) {
       context.part_of.push('global');
     }
 
@@ -275,16 +276,17 @@ export class ElasticsearchService {
   }
 
   createPage(page: Page, context: Context) {
-    this.transport.postPage(page, context, true).subscribe(
-      (result: IndexResponse) => {
-        console.log(result);
-        if ( (result._shards.failed !== 0) || (result.result !== 'created') ) {
-          this.messages.error('[DEVELOPER]: [Elasicsearch Error]:<br>Indexing failed.<br>' + JSON.stringify(result));
+    this.client.index({
+      index: context.index, type: 'page', body: page
+    }).then(
+      (resp: CreateDocumentResponse) => {
+        if ( (resp._shards.failed !== 0) || (resp.result !== 'created') ) {
+          this.messages.error('[DEVELOPER]: [Elasicsearch Error]:<br>Indexing failed.<br>' + JSON.stringify(resp));
         } else {
-          this.messages.success('Created ' + page.title + '.<br>Indexed to ' + result._shards.total + ' nodes.');
+          this.messages.success('Created ' + page.title + '.<br>Indexed to ' + resp._shards.total + ' nodes.');
         }
       },
-      error => { this.messages.error('Could not save the Page.<br>' + error); }
+      (error) => { this.messages.error('Could not save the Page.<br>' + error); }
     );
   }
 
@@ -303,13 +305,6 @@ export class ElasticsearchService {
 
     // emit the new hits
     this.hits.next(this._hits);
-
-    // emit the new pages
-    // this._pages.length = 0;
-    // raw.hits.hits.forEach((item, index) => {
-    //  this._pages.push(new Page().from_source(item._source, item._id));
-    // });
-    // this.pages.next(this._pages.slice());
   }
 
   onQueryStringChanged(queryString: string, context: string, variable: string) {
@@ -317,12 +312,47 @@ export class ElasticsearchService {
   }
 
   search(queryString: string, context: Context, variable?: string) {
-    this.transport.getSearch(queryString, context.name, variable).subscribe(
-      (searchResult: SearchResponse<any>) => {
-        console.log(searchResult);
-        this.parseRawHits(searchResult);
+    // build the multi_match part
+    const multi_match = {
+      'query': queryString,
+      // 'type': 'best_fields',
+      'type': this.settings.matchType.getValue(),
+      'tie_breaker': 0.3
+    };
+
+    // build the query Object
+    let query = {};
+    if (variable) {
+      query = {
+        'bool': {
+          'must': {
+            'multi_match': multi_match
+          },
+          'filter': {
+            'term': {
+              'variable.raw': variable
+            }
+          }
+        }
+      };
+    } else {
+      query = {
+        'multi_match': multi_match
+      };
+    }
+
+    // send query to Elasticsearch
+    this.client.search({
+      index: context.name,
+      type: 'page',
+      body: {query: query}
+    }).then(
+      (resp: SearchResponse<any>) => {
+        this.parseRawHits(resp);
       },
-      (error) => { console.log(error); }
+      (error) => {
+        console.log(error);
+      }
     );
   }
 }

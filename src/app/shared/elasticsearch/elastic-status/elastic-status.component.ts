@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ElasticTransportService} from '../elastic-transport.service';
 import {ElasticsearchService} from '../elasticsearch.service';
 import {Subscription} from 'rxjs/internal/Subscription';
 

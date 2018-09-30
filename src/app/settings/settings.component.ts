@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {SettingsService} from '../shared/settings.service';
-import {ElasticTransportService} from '../shared/elasticsearch/elastic-transport.service';
+import {ElasticsearchService} from '../shared/elasticsearch/elasticsearch.service';
 
 @Component({
   selector: 'app-settings',
@@ -20,7 +20,7 @@ export class SettingsComponent implements OnInit {
   matchType: string;
   maxVariableCount: number;
 
-  constructor(private settings: SettingsService, private transport: ElasticTransportService) { }
+  constructor(private settings: SettingsService, private es: ElasticsearchService) { }
 
   ngOnInit() {
     // Cookie settings
@@ -36,9 +36,15 @@ export class SettingsComponent implements OnInit {
     this.maxVariableCount = this.settings.maxVariableCount.getValue();
 
     // check if the current host is valid
-    this.transport.pingCluster().subscribe(
-      value => { this.elasticHostValid = true; },
-      error => { this.elasticHostValid = false; }
+    // this.transport.pingCluster().subscribe(
+    //  value => { this.elasticHostValid = true; },
+    //  error => { this.elasticHostValid = false; }
+    //);
+    this.es.ping({}).then(
+      () => { this.elasticHostValid = true; },
+      () => { this.elasticHostValid = false; }
+    ).catch(
+      () => { this.elasticHostValid = false; }
     );
   }
 
@@ -48,14 +54,20 @@ export class SettingsComponent implements OnInit {
 
   onElasticHostChanged() {
     this.settings.elasticHost.next(this.elasticHost);
-    this.transport.pingCluster().subscribe(
-      value => {
-        this.elasticHostValid = true;
-        },
-      error => {
-        this.elasticHostValid = false;
-      }
+    this.es.ping({}).then(
+      () => { this.elasticHostValid = true; },
+      () => { this.elasticHostValid = false; }
+    ).catch(
+      () => { this.elasticHostValid = false; }
     );
+    // this.transport.pingCluster().subscribe(
+    //   value => {
+    //     this.elasticHostValid = true;
+    //     },
+    //   error => {
+    //     this.elasticHostValid = false;
+    //   }
+    // );
   }
 
   onRefreshStatusChanged() {

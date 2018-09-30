@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
 import {Context} from '../../models/context.model';
 import {Subscription} from 'rxjs/internal/Subscription';
-import {Variables} from '../../shared/elasticsearch/elastic-response.model';
+import {Variables} from '../../shared/elasticsearch/data.model';
 import {SettingsService} from '../../shared/settings.service';
 import {Router} from '@angular/router';
 

@@ -6,7 +6,7 @@ import {Page} from '../../models/page.model';
 import {ElasticsearchService} from '../../shared/elasticsearch/elasticsearch.service';
 import {Context} from '../../models/context.model';
 import {Subscription} from 'rxjs/internal/Subscription';
-import {Variables} from '../../shared/elasticsearch/elastic-response.model';
+import {Variables} from '../../shared/elasticsearch/data.model';
 
 @Component({
   selector: 'app-page-edit',
