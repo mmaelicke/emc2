@@ -5,11 +5,12 @@ import {Context} from '../../models/context.model';
 import {MessageService} from '../message.service';
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {Page} from '../../models/page.model';
-import {IndexResponse, SearchResponse} from './elastic-response.model';
+import {IndexResponse} from './elastic-response.model';
 import {Variables} from './elastic-response.model';
 import {SettingsService} from '../settings.service';
 import { Client } from 'elasticsearch-browser';
 import * as elasticsearch from 'elasticsearch-browser';
+import {SearchResponse} from 'elasticsearch';
 
 @Injectable()
 export class ElasticsearchService {
@@ -69,7 +70,7 @@ export class ElasticsearchService {
         this.loadContexts();
         this.loadVariables();
       }
-      this.messages.success('Elastic Cluster online.')
+      this.messages.success('Elastic Cluster online.');
       },
       () => {
         console.log('pingCluster then->onrejected');
@@ -93,36 +94,49 @@ export class ElasticsearchService {
   }
 
   private loadContexts() {
-    // load all context objects. If the global context does not exist, produce an error
-    this.transport.getContexts(50).subscribe(
-      (data: Context[]) => {
-        if (data.find(context => context.name === 'global')) {
-          this._contexts = data;
-          this.contexts.next(this._contexts.slice());
-        } else {
-          this._contexts = [];
-          this.contexts.next(this._contexts.slice());
+    this.client.search({
+      index: 'mgn', type: 'context', size: 150
+    }).then(
+      (resp: SearchResponse<any>) => {
+        const contexts: Context[] = [];
+        for (const context of resp.hits.hits) {
+          contexts.push(new Context(context._id, context._source.name, context._source.part_of, context._source.index));
         }
+        this._contexts = contexts;
+        this.contexts.next(this._contexts);
       },
-      (error) => {
+      () => {
         this._contexts = [];
-        this.contexts.next(this._contexts.slice());
+        this.contexts.next(this._contexts);
       }
     );
   }
 
   loadVariables(activeContext= 'global') {
-    this.transport.getVariables(activeContext).subscribe(
-      (result: {took: number, timed_out: boolean, hits: any, _shards: any, aggregations: any}) => {
-        // load the new variables
-        const buckets = result.aggregations.variables.buckets;
+    this.client.search({
+      index: activeContext, type: 'page', size: 0,
+      body: {
+        aggs: {
+          variables: {
+            terms: {
+              field: 'variable.raw',
+              size: 100
+            }
+          }
+        }
+      }
+    }).then(
+      (resp: SearchResponse<any>) => {
         this._variables = [];
-        buckets.forEach(bucket => this._variables.push({name: bucket.key, count: bucket.doc_count}));
-
-        // emit the new variables lists
+        for (const bucket of resp.aggregations.variables.buckets) {
+          this._variables.push({name: bucket.key, count: bucket.doc_count});
+        }
         this.variables.next(this._variables);
       },
-      error => { this.messages.error('[DEVELOPER]: Cannot load variables.<br>' + error); }
+      () => {
+        this.variables.next([]);
+        console.log('DEV: No variables found');
+      }
     );
   }
 
@@ -218,7 +232,7 @@ export class ElasticsearchService {
     );
   }
 
-  private parseRawHits(response: SearchResponse) {
+  private parseRawHits(response: SearchResponse<any>) {
     // save the last query parameters
     this.lastQueryTime = response.took;
     this.lastTimedOut = response.timed_out;
@@ -248,7 +262,7 @@ export class ElasticsearchService {
 
   search(queryString: string, context: Context, variable?: string) {
     this.transport.getSearch(queryString, context.name, variable).subscribe(
-      (searchResult: SearchResponse) => {
+      (searchResult: SearchResponse<any>) => {
         console.log(searchResult);
         this.parseRawHits(searchResult);
       },
