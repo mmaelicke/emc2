@@ -24,18 +24,31 @@
   </ng-template>
 </div>
 
-<!-- DEVEPOMENT needs a ngIF importallowed -->
 <div class="row">
   <div class="col col-xs-12">
-    <app-page-edit [context]="activeContext" *ngIf="allowImport"></app-page-edit>
+    <h3 (click)="pageToggler = !pageToggler" style="cursor: pointer">
+      <fa name="chevron-{{ pageToggler ? 'down' : 'right' }}"></fa>  New Page
+    </h3>
+    <hr>
+    <app-page-edit [context]="activeContext" *ngIf="allowImport && pageToggler "></app-page-edit>
   </div>
 </div>
 
 <div class="row">
   <div class="col col-xs-12">
-    <input type="file" (change)="preview($event)">
+    <h3 (click)="csvToggler = !csvToggler" style="cursor: pointer">
+      <fa name="chevron-{{ csvToggler ? 'down' : 'right'}}"></fa> Import Data
+    </h3>
+    <hr>
+    <div class="alert alert-warning" *ngIf="allowImport && csvToggler">
+      <h3 class="alert-heading">Not Implemented</h3>
+      <p>The CSV Data page import is not implemented yet.</p>
+    </div>
   </div>
 </div>
-<hr>
-<p>Development: activeContext: {{ activeContextName }}</p>
-<textarea cols="30" rows="10">{{ fileString }}</textarea>
+
+<!--<p>Development: activeContext:</p>
+<pre>
+  {{ activeContext | json }}
+</pre>-->
+

@@ -8,6 +8,7 @@ import {EditContextComponent} from './settings/context-manager/edit-context/edit
 import {StartPageComponent} from './generic/start-page/start-page.component';
 import {HitPageComponent} from './main/hit-page/hit-page.component';
 import {ResultComponent} from './main/result/result.component';
+import {DataLoadComponent} from './main/hit-page/data-load/data-load.component';
 
 const appRoutes = [
   {path: 'import', component: ImporterComponent},
@@ -19,6 +20,7 @@ const appRoutes = [
       {path: '', component: StartPageComponent, pathMatch: 'full'},
       {path: 'r', component: ResultComponent},
       {path: 'r/:id', component: HitPageComponent},
+      {path: 'r/:id/import', component: DataLoadComponent},
     ]},
   {path: '**', component: PageNotFoundComponent}
 ];

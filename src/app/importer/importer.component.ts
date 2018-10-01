@@ -18,8 +18,9 @@ export class ImporterComponent implements OnInit, OnDestroy {
   activeContext: Context;
   allowImport = false;
 
-  // File properties
-  fileString: string;
+  // togglers
+  pageToggler = true;
+  csvToggler = false;
 
   constructor(private es: ElasticsearchService) { }
 
@@ -53,15 +54,6 @@ export class ImporterComponent implements OnInit, OnDestroy {
     } else {
       this.allowImport = true;
     }
-  }
-
-  preview($event) {
-    const reader = new FileReader();
-    reader.onloadend = (e: any) => {
-      console.log(reader.result);
-      this.fileString = reader.result;
-    };
-    reader.readAsText($event.target.files[0]);
   }
 
   ngOnDestroy() {

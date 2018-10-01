@@ -36,6 +36,10 @@ import { SupplementaryInfoComponent } from './main/hit-page/supplementary-info/s
 import { DataViewComponent } from './main/hit-page/data-view/data-view.component';
 import { MapComponent } from './main/result/map/map.component';
 import { ResultComponent } from './main/result/result.component';
+import { DataLoadCsvComponent } from './main/hit-page/data-load/data-load-csv/data-load-csv.component';
+import {PapaParseModule} from 'ngx-papaparse';
+import { DataLoadComponent } from './main/hit-page/data-load/data-load.component';
+import { ContextSelectComponent } from './importer/context-select/context-select.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +65,9 @@ import { ResultComponent } from './main/result/result.component';
     DataViewComponent,
     MapComponent,
     ResultComponent,
+    DataLoadCsvComponent,
+    DataLoadComponent,
+    ContextSelectComponent,
   ],
   imports: [
     BrowserModule,
@@ -71,7 +78,8 @@ import { ResultComponent } from './main/result/result.component';
     LeafletModule.forRoot(),
     AppRoutingModule,
     ReactiveFormsModule,
-    TagInputModule
+    TagInputModule,
+    PapaParseModule,
   ],
   providers: [
     ElasticsearchService,

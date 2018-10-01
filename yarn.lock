@@ -274,7 +274,12 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/node@^6.0.46", "@types/node@~6.0.60":
+"@types/node@^10.11.3":
+  version "10.11.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.11.3.tgz#c055536ac8a5e871701aa01914be5731539d01ee"
+  integrity sha512-3AvcEJAh9EMatxs+OxAlvAEs7OTy6AG94mcH1iqyVDwVVndekLxzwkWQ/Z4SDbY6GO2oyUXyWW8tQ4rENSSQVQ==
+
+"@types/node@^6.0.46":
   version "6.0.111"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.111.tgz#85f880a1bab78d395a5de9bcb5319e73a0c31400"
   integrity sha512-DoWK5a544Jcr6C1qBadalyj3gQT5V9B87qFBb+uOOq1Id309Lbe10zwsCGCURZEOBoS/pOsmbDN4FnD4sOwJaw==
@@ -5020,6 +5025,14 @@ ngx-cookie-service@^1.0.10:
   resolved "https://registry.yarnpkg.com/ngx-cookie-service/-/ngx-cookie-service-1.0.10.tgz#dc17ff4f1a0224cf3b0c7a7f52bff2b798396e3d"
   integrity sha512-TAXpQsIONAupTqkUDcH44hFQsLTvsXpxM80eKgxvy3vhBFfT1uIdR7BRhM7VpUW5J7BN9qCbGNgLN5lsnVu7pw==
 
+ngx-papaparse@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-papaparse/-/ngx-papaparse-3.0.0.tgz#d7cf20eb33b7766e7cf2dc95b78ce912f5752028"
+  integrity sha512-+gG9OvRojWxxDhRXx0fUMVco5bxrQ6mf76xpKh+IQKa4nwvyu9/TUG7FLt4xX9bQT0QX6mBrI5hIWZ2UarU4kA==
+  dependencies:
+    papaparse "~4.4.0"
+    tslib "^1.9.0"
+
 no-case@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.2.tgz#60b813396be39b3f1288a4c1ed5d1e7d28b464ac"
@@ -5528,6 +5541,11 @@ pako@~1.0.5:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.6.tgz#0101211baa70c4bca4a0f63f2206e97b7dfaf258"
   integrity sha512-lQe48YPsMJAig+yngZ87Lus+NF+3mtu7DVOBu6b/gHO1YpKwIj5AWjZ/TOS7i46HD/UixzWb1zeWDZfGZ3iYcg==
+
+papaparse@~4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-4.4.0.tgz#6bcdbda80873e00cfb0bdcd7a4571c72a9a40168"
+  integrity sha1-a829qAhz4Az7C9zXpFcccqmkAWg=
 
 parallel-transform@^1.1.0:
   version "1.1.0"

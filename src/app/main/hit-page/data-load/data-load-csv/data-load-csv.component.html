@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="col col-xs-12">
+    <input type="file" class="form-control" (change)="loadFile($event)">
+  </div>
+</div>
+<hr>
+<h3>Preview</h3>
+<div class="row">
+  <div class="col col-md-4">
+    <div class="input-group">
+      <div class="input-group-prepend"><span class="input-group-text">delimiter: </span></div>
+      <input type="text" [(ngModel)]="delimiter" (input)="parseFileString()" class="form-control">
+    </div>
+  </div>
+  <div class="col col-md-4">
+    <button type="button" (click)="onImport()" [disabled]="contentAsJson.length === 0" class="btn btn-success">
+      <fa name="upload"></fa> Import
+    </button>
+  </div>
+  <div class="col col-md-4">
+    <button type="button" (click)="onCancel()" [disabled]="contentAsJson.length === 0" class="btn btn-danger">
+      <fa name="times"></fa> Cancel
+    </button>
+  </div>
+</div>
+<div class="row">
+  <div class="col col-md-6">
+    <pre>
+      {{ contentAsJson | json }}
+    </pre>
+  </div>
+  <div class="col col-md-6">
+    <table class="table table-striped">
+      <tr>
+        <th *ngFor="let head of contentHeader">{{ head }}</th>
+      </tr>
+      <tr *ngFor="let row of contentAsJson">
+        <td *ngFor="let head of contentHeader">{{ row[head] }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
