@@ -24,6 +24,7 @@ export class ElasticsearchService {
   contexts = new BehaviorSubject<Context[]>(this._contexts);
   variables = new BehaviorSubject<Variables[]>(this._variables);
   hits = new BehaviorSubject<Hit[]>(this._hits);
+  activeContextName = new BehaviorSubject<string>('global');
 
   // parameters of the last search
   lastQueryTime: number;
@@ -93,6 +94,10 @@ export class ElasticsearchService {
 
   getContexts() {
     return this._contexts.slice();
+  }
+
+  getContext(name: string) {
+    return this._contexts.find(context => context.name === name);
   }
 
   private loadContexts() {

@@ -13,7 +13,8 @@ import {Router} from '@angular/router';
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   queryString = '';
-  queryContextName = 'global';
+  queryContextName: string;
+  activeContextSubscription: Subscription;
   queryContext: Context;
   queryVariable = '-- all --';
   searchOnType = true;
@@ -32,7 +33,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // get the current contexts and subscribe to changes
     this.contexts = this.es.getContexts();
-    this.onQueryContextChanged();
+    this.queryContextName = this.es.activeContextName.getValue();
+    this.queryContext = this.es.getContext(this.queryContextName);
+
+    // subscribe to changes
+    this.activeContextSubscription = this.es.activeContextName.subscribe(
+      (name: string) => {
+        this.queryContextName = name;
+        this.queryContext = this.es.getContext(this.queryContextName);
+        //this.onQueryContextChanged();
+      }
+    );
+
+    //this.onQueryContextChanged();
     this.contextSubscription = this.es.contexts.subscribe(
       (contexts: Context[]) => {
         this.contexts = contexts;
@@ -56,7 +69,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onQueryContextChanged() {
-    this.queryContext = this.contexts.find(c => c.name === this.queryContextName);
+    // Push the new name to es.activeContext and it will change the name
+    // this.queryContext = this.contexts.find(c => c.name === this.queryContextName);
+    //this.queryContext = this.es.getContext(this.queryContextName);
+    this.es.activeContextName.next(this.queryContextName);
 
     // reload the variables
     this.es.loadVariables(this.queryContextName);
@@ -87,6 +103,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.contextSubscription.unsubscribe();
     this.variablesSubscription.unsubscribe();
     this.maxVariablesSubscription.unsubscribe();
+    this.activeContextSubscription.unsubscribe();
   }
 
 }

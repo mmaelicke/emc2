@@ -15,6 +15,7 @@ export class ImporterComponent implements OnInit, OnDestroy {
   contexts: Context[];
   contextSubscription: Subscription;
   activeContextName = 'global';
+  activeContextNameSubscription: Subscription;
   activeContext: Context;
   allowImport = false;
 
@@ -26,8 +27,10 @@ export class ImporterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // load the Contexts and identify the active context
+    this.activeContextName = this.es.activeContextName.getValue();
+    this.activeContext = this.es.getContext(this.activeContextName);
     this.contexts = this.es.getContexts();
-    this.onActiveContextChanged();
+    //this.onActiveContextChanged();
 
     // manage the Subscription
     this.contextSubscription = this.es.contexts.subscribe(
@@ -37,13 +40,21 @@ export class ImporterComponent implements OnInit, OnDestroy {
         this.onActiveContextChanged();
       }
     );
+
+    this.activeContextNameSubscription = this.es.activeContextName.subscribe(
+      (name: string) => {
+        this.activeContextName = name;
+        this.activeContext = this.es.getContext(name);
+      }
+    );
     this.checkContexts();
   }
 
   onActiveContextChanged() {
     // the user changed the activeContextName, therefore it has to be loaded again
-    this.activeContext = this.contexts.find(c => c.name === this.activeContextName);
+    // this.activeContext = this.contexts.find(c => c.name === this.activeContextName);
     // console.log(this.activeContextName, this.activeContext);
+    this.es.activeContextName.next(this.activeContextName);
   }
 
   private checkContexts() {
@@ -58,6 +69,7 @@ export class ImporterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.contextSubscription.unsubscribe();
+    this.activeContextNameSubscription.unsubscribe();
   }
 
 }
