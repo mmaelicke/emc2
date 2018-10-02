@@ -39,7 +39,6 @@ import { ResultComponent } from './main/result/result.component';
 import { DataLoadCsvComponent } from './main/hit-page/data-load/data-load-csv/data-load-csv.component';
 import {PapaParseModule} from 'ngx-papaparse';
 import { DataLoadComponent } from './main/hit-page/data-load/data-load.component';
-import { ContextSelectComponent } from './importer/context-select/context-select.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +66,6 @@ import { ContextSelectComponent } from './importer/context-select/context-select
     ResultComponent,
     DataLoadCsvComponent,
     DataLoadComponent,
-    ContextSelectComponent,
   ],
   imports: [
     BrowserModule,
